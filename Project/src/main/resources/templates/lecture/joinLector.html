@@ -1,0 +1,142 @@
+<body>
+	<h1 align="center">강사 회원가입 페이지</h1>
+	<hr />
+	<form action="/joinLectorProc" method="post" align="center" onsubmit="return validateForm()">
+		
+		<h3>수업의 테마는 무엇인가요?</h3>
+		<hr>
+		<br>
+		<input type="radio" name="lecture_theme" value="piano">피아노<br/>
+		<input type="radio" name="lecture_theme" value="guitar">기타<br/>
+		<input type="radio" name="lecture_theme" value="drum">드럼<br/>
+		<input type="radio" name="lecture_theme" value="violin">바이올린<br/>
+		<input type="radio" name="lecture_theme" value="flute">플룻<br/>
+		<input type="radio" name="lecture_theme" value="cello">첼로<br/>
+		<input type="radio" name="lecture_theme" value="vocal">보컬<br/>
+		<input type="radio" name="lecture_theme" value="dancing">무용<br/>
+		<input type="radio" name="lecture_theme" value="composition">작곡<br/>
+		
+		<br>
+		<hr>
+		<h3>수업을 진행하실 별도의 공간을 보유하고 계신가요?</h3>
+		<hr>
+		<br>
+		 <input type="radio" name="have_lecture_room" value="O" onclick="showField()">네<br>
+		 <input type="radio" name="have_lecture_room" value="X" onclick="hideField()">아니오<br>
+		
+		 <br>
+		 <div id="addressField" style="display: none;">
+	      	  <h3>강의실의 주소를 입력해주세요!</h3>
+	        <input type="text" name="lecture_room_address" id="lecture_room_address" style="width: 600px;">
+	     </div>
+	     
+	    <br>
+	    <hr>
+		 <h3>선호하는 수강 인원은 몇 명이신가요?</h3>
+		<hr>
+	    <br> 
+	    <select name="prefer_personnel" id="prefer_personnel">
+		    <option value="" selected disabled hidden>선택해주세요</option>
+		    <option value="1"> 개인 교습
+		    <option value="1~5">1~5명
+		    <option value="5~10">5~10명
+		    <option value="10~20">10~20명
+		</select>
+		 
+	    <br>
+	    <br>
+	    <hr>
+		 <h3>강의을 진행하실 항목에 대한 강사님의 커리어를 간략히 소개해주세요!</h3>
+		<hr>
+	    <br> 
+	    <input type="text" name="career" id="career" style="width: 600px; height:100px">
+		
+		<br>
+	    <hr>
+		 <h3>강사님을 위한 혜택이 준비되어있습니다!</h3>
+		 <h3>멤버쉽에 가입하시면 강사님의 강의가 상단에 노출됩니다!</h3>
+		<hr>
+		<br>
+		<input type="radio" name="membership" value="O" onclick="showMembershipType()">멤버쉽 가입<br>
+		<input type="radio" name="membership" value="X" onclick="hideMembershipType()">멤버쉽 미가입<br>
+		
+		<br>
+		<div id="membershipField" style="display: none;">
+			<h3>멤버쉽 혜택!</h3>
+			
+	    	<input type="radio" name="membershipType" value="1month">1개월 9,900\<br/>
+			<input type="radio" name="membershipType" value="3month">3개월 27,900\<br/>
+			<input type="radio" name="membershipType" value="6month">6개월 52,900\<br/>
+			<input type="radio" name="membershipType" value="12month">12개월 109,900\<br/>
+	    </div>
+		
+		<br>
+		<input type="submit" value="회원가입">
+	</form>
+	
+	<script>
+		function showField() {
+			document.getElementById("addressField").style.display = "block";
+		}
+		
+		function hideField() {
+			document.getElementById("addressField").style.display = "none";
+		}
+		
+		function showMembershipType() {
+			document.getElementById("membershipField").style.display = "block";
+		}
+		
+		function hideMembershipType() {
+			document.getElementById("membershipField").style.display = "none";
+		}
+		
+		function validateForm() {
+		    var lecture_theme = document.querySelector('input[name="lecture_theme"]:checked');
+		    var have_lecture_room = document.querySelector('input[name="have_lecture_room"]:checked');
+		    var lecture_room_address = document.getElementById("lecture_room_address").value;
+		    var prefer_personnel = document.getElementById("prefer_personnel").value;
+		    var career = document.getElementById("career").value;
+		    var membership = document.querySelector('input[name="membership"]:checked');
+		    var membershipType = document.querySelectorAll('input[name="membershipType"]:checked');
+		    
+		    if (!lecture_theme) {
+		        alert("수업 테마를 선택해주세요.");
+		        return false;
+		    }
+		    
+		    if (!have_lecture_room) {
+		        alert("강의 공간 보유 여부를 선택해주세요.");
+		        return false;
+		    }
+		    
+		    if (have_lecture_room.value === "O" && lecture_room_address.trim() === "") {
+		        alert("강의실 주소를 입력해주세요.");
+		        return false;
+		    }
+		    
+		    if (!prefer_personnel) {
+		        alert("선호하는 수강 인원을 선택해주세요.");
+		        return false;
+		    }
+		    
+		    if (career.trim() === "") {
+		        alert("강사님의 커리어를 입력해주세요.");
+		        return false;
+		    }
+		    
+		    if (!membership) {
+		        alert("멤버쉽 가입 여부를 선택해주세요.");
+		        return false;
+		    }
+		    
+		    if (membership.value === "O" && membershipType.length === 0) {
+		        alert("멤버쉽 혜택을 선택해주세요.");
+		        return false;
+		    }
+		    
+		    alert("관리자의 승인 후 처리 될 예정입니다. 감사합니다!");
+		    return true;
+		}
+	</script>
+</body>

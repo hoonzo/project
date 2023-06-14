@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>토큰 구매내역 조회</title>
+</head>
+<body>
+	<table align="center" th:each="item : ${tokenOrderList}">
+	    <tr>
+	        <td colspan="2"><hr></td>
+	    </tr>
+	    <tr>
+	        <td>주문 번호</td>
+	        <td th:text="${item.rechargeOrderNum}"></td>
+	    </tr>
+	    <tr>
+	        <td>결제 금액</td>
+	        <td th:text="${item.changeWon  + '원'}" id="changeWon"></td>
+	    </tr>
+	    <tr>
+	        <td>구매한 토큰 갯수</td>
+	        <td th:text="${item.pay + '개'}" id="pay"></td>
+	    </tr>
+	    <tr>
+	        <td>결제 수단</td>
+	        <td th:text="${item.paymentMethod}"></td>
+	    </tr>
+	    
+	     <tr>
+	        <td>결제 시간</td>
+	        <td th:text="${item.createDate}"></td>
+	    </tr>
+	    
+    	<tr>
+	        <td align="center"><a href="myPage">돌아가기</a></td>
+	    </tr>
+	</table>
+   
+<script>
+    var changeWonElement = document.getElementById("changeWon");
+    var changeWon = parseFloat(changeWonElement.textContent);
+    var numberWithCommas = changeWon.toLocaleString();
+    
+    changeWonElement.textContent = numberWithCommas;
+    
+    var payElement = document.getElementById("pay");
+    var pay = parseFloat(payElement.textContent);
+    
+    payElement.textContent = parseInt(pay) + "개";
+</script> 
+   
+</body>
+</html>

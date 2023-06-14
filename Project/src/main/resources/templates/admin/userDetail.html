@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>유저 상세보기</title>
+
+<style>
+.larger-button {
+	width: 200px;
+	height: 50px;
+	background-color: silver;
+}
+
+.center-align {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	height: 50vh;
+}
+
+table {
+	margin: 0 auto;
+}
+</style>
+
+</head>
+<body>
+	<div class="center-align">
+		<table
+			style="width: 100%; border-collapse: separate; border-spacing: 0 10px;">
+
+			<tbody>
+				<tr th:each="user : ${userList}">
+					<th>회원 번호</th>
+					<td><span th:text="${user.id}"></span></td>
+				</tr>
+
+				<tr th:each="user : ${userList}">
+					<th>아이디</th>
+					<td><span th:text="${user.username}"></span></td>
+				</tr>
+
+				<tr th:each="user : ${userList}">
+					<th>이름</th>
+					<td><span th:text="${user.name}"></span></td>
+				</tr>
+
+				<tr th:each="user : ${userList}">
+					<th>이메일</th>
+					<td><span th:text="${user.email}"></span></td>
+				</tr>
+
+				<tr th:each="user : ${userList}">
+					<th>연락처</th>
+					<td><span th:text="${user.phone}"></span></td>
+				</tr>
+
+				<tr th:each="user : ${userList}">
+					<th>선호 항목</th>
+					<td><span th:text="${user.prefer_lecture}"></span></td>
+				</tr>
+
+				<tr th:each="user : ${userList}">
+					<th>매너 스코어</th>
+					<td><span th:text="${user.manner_score}"></span></td>
+				</tr>
+
+				<tr th:each="user : ${userList}">
+					<th>토큰</th>
+					<td><span th:text="${user.token}"></span></td>
+				</tr>
+
+
+				<tr th:each="user : ${userList}">
+					<th>토큰 선물</th>
+					<td>
+						<form th:action="@{/giftToken}" method="post">
+							<input type="hidden" name="username" th:value="${user.username}">
+							<input type="number" name="number" min="0" max="100" step="1"
+								value="0" style="margin: 0 auto;">
+							<button type="submit">선물하기</button>
+						</form>
+					</td>
+				</tr>
+
+				<tr th:each="user : ${userList}">
+					<th>회원 종류</th>
+					<td><span th:text="${user.role}"></span></td>
+				</tr>
+
+				<tr th:each="user : ${userList}">
+					<th>가입일</th>
+					<td><span th:text="${user.createDate}"></span></td>
+				</tr>
+
+			</tbody>
+
+		</table>
+	</div>
+	
+	<div style="display: flex; justify-content: center;">
+		<tr th:each="user : ${userList}">
+			<td>
+			    <form action="userKick" method="post" style="margin-right: 100px;" onsubmit="return kickCheck()">
+			    	<input type="hidden" name="user_id" th:value="${user.id}">
+			        <button class="larger-button">해당 회원 강퇴</button>
+			    </form>
+	    	</td>
+		</tr>
+		
+	    <form action="allUserView" method="post">
+	        <button class="larger-button">돌아가기</button>
+	    </form>
+	</div>
+
+<script th:inline="javascript">
+
+    function kickCheck() {
+        var result = confirm("해당 유저를 정말 밴하시겠습니까?");
+        return result;
+    }
+
+</script>
+
+
+
+</body>
+</html>

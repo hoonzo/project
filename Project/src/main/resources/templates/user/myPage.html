@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>마이페이지</title>
+</head>
+
+<body>
+	<h2>마이페이지</h2>
+	
+	<form action="myPageUpdate" method="post">
+		<button>정보 수정</button>	
+	</form>
+	
+	<form action="lectureList" method="post">
+		<button>수강 내역</button>	
+	</form>
+	
+	<form action="tokenOrderList" method="post">
+		<button>토큰 구매 내역</button>	
+	</form>
+		
+	<form action="cartList" method="post">
+		<button>카트</button>	
+	</form>
+
+	<form action="qnaList" method="post">
+		<button>문의 내역</button>	
+	</form>
+	
+	<div id="msg" th:text="${msg}" style="display: none;"></div>
+	
+<script>	
+	function msg() {
+		var msgElement = document.getElementById("msg");
+		var msg = msgElement.innerText;
+
+		if(msg != '') {
+			alert(msg);
+		}
+	}
+
+	msg();
+</script>	
+	
+</body>
+
+</html>

@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>회원가입 페이지</title>
+</head>
+<body>
+<h1>회원가입 페이지</h1>
+<hr/>
+	<form action="/joinProc" method="post">
+		ID : <input type="text" name="username" placeholder="ID"/> <br/>
+		PW : <input type="password" name="password" placeholder="Password"/> <br/>
+		
+		NAME : <input type="text" name="name" placeholder="Name"/> <br/>
+		E-MAIL : <input type="email" name="email" placeholder="Email"/> <br/>
+		PHONE : <input type="text" name="phone" placeholder="Phone"/> <br/>
+		
+		<br><h3>선호하는 항목을 선택해주세요!
+				(중복 가능)</h3>
+		<input type="checkbox" name="prefer_lecture"
+		    	value="piano">피아노<br/>
+		
+		<input type="checkbox" name="prefer_lecture"
+		    	value="guitar">기타<br/>
+		    	
+		<input type="checkbox" name="prefer_lecture"
+		    	value="drum">드럼<br/>
+		    	
+		<input type="checkbox" name="prefer_lecture"
+		    	value="violin">바이올린<br/>
+		
+		<input type="checkbox" name="prefer_lecture"
+		    	value="flute">플룻<br/>
+		    	
+		<input type="checkbox" name="prefer_lecture"
+		    	value="cello">첼로<br/>	
+		    	
+		<input type="checkbox" name="prefer_lecture"
+		    	value="vocal">보컬<br/>
+		    	
+		<input type="checkbox" name="prefer_lecture"
+		    	value="dancing">무용<br/>
+		
+		<input type="checkbox" name="prefer_lecture"
+		    	value="composition">작곡<br/>	  
+	    	
+		 <br><br>
+		 <button>회원가입</button>
+		 
+	</form>
+</body>
+</html>

@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>이름 수정</title>
+</head>
+<body>
+	<h1>이름 수정</h1>
+    
+    <form action="updateUserName" method="post" onsubmit="return checkName()">  
+        <input type="text" id="afterName" name="afterName" th:placeholder="${beforeName}" oninput="checkSameName()">
+        <input type="submit" id="submitButton" value="수정">
+    </form>
+    
+    <table>
+        <tr>
+            <td>
+                <div id="checkError" style="color: red; display: none;"></div>
+                <div id="beforeName" th:text="${beforeName}" style="display: none;"></div>
+                <div id="msg" th:text="${msg}" style="display: none;"></div>
+            </td>
+        </tr>
+    </table>
+
+    <script>
+    
+    var submitButton = document.getElementById("submitButton");
+    
+        function checkSameName() {
+            var afterName = document.getElementById("afterName").value;
+            var beforeName = document.getElementById("beforeName").innerText;
+            var checkError = document.getElementById("checkError");
+
+            if (afterName === beforeName) {
+                checkError.innerText = "기존에 사용하던 이름을 입력하셨습니다.";
+                checkError.style.display = "block";
+                document.getElementById("afterName").style.border = "1px solid red";
+                submitButton.disabled = true;
+            } else {
+                checkError.innerText = "";
+                checkError.style.display = "none";
+                document.getElementById("afterName").style.border = "1px solid black";
+                submitButton.disabled = false;
+            }
+        }
+    
+        function checkName() {
+            var afterName = document.getElementById("afterName").value;
+            var checkError = document.getElementById("checkError");
+            var submitButton = document.getElementById("submitButton");
+
+            if (afterName.trim() === "") {
+                checkError.innerText = "이름을 입력해주세요.";
+                checkError.style.display = "block";
+                document.getElementById("afterName").style.border = "1px solid red";
+                submitButton.disabled = true;
+                return false;
+            } else {
+                submitButton.disabled = false;
+            }
+
+            return true;
+        }
+        
+        function msg() {
+    		var msgElement = document.getElementById("msg");
+    		var msg = msgElement.innerText;
+
+    		if(msg != '') {
+    			alert(msg);
+    		}
+    	}
+    	
+    	msg();
+    </script>
+</body>
+</html>

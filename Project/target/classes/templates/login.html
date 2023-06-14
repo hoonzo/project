@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html xmlns="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>로그인 페이지</title>
+</head>
+<body>
+    <h1>로그인 페이지</h1>
+    <hr/>
+
+    <form action="loginProc" method="post">
+        ID : <input type="text" name="username" /><br>
+        PW : <input type="password" name="password" /><br>
+        <button>로그인</button>
+    </form>
+    
+   <div th:if="${param.error}">
+        <p style="color: red;">잘못된 아이디 또는 비밀번호입니다.</p>
+   </div>
+    
+</body>
+</html>

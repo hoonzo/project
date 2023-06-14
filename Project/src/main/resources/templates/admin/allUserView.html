@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+
+<style>
+    #roleCheck {
+        width: 200px; /* 원하는 크기로 조정 */
+        height: 30px; /* 원하는 크기로 조정 */
+        font-size: 16px; /* 원하는 글꼴 크기로 조정 */
+    }
+</style>
+
+<meta charset="UTF-8">
+<title>어드민 전체 회원 조회</title>
+</head>
+<body>
+	
+	<h2 align="center">전체 회원 리스트</h2><br>
+	
+	<select id="roleCheck" onchange="CheckUsers()">
+		<option value="">전체</option>
+		<option value="ROLE_USER">유저</option>
+		<option value="ROLE_LECTOR">강사</option>
+	</select>
+	<br><br>
+	
+	<table style="width: 100%; border-collapse: separate; border-spacing: 0 10px;">
+	
+	  <thead align="center">
+	    <tr>
+	      <th>ID</th>
+	      <th>Username</th>
+	      <th>Name</th>
+	      <th>Email</th>
+	    </tr>
+	  </thead>
+	  
+	  <tbody align="center">
+	    <tr th:each="user : ${allUserlist}">
+	   	  <td th:text="${user.id}"></td>
+	      <td><a th:href="@{'userDetail' + '?username=' + ${user.username}}" th:text="${user.username}"></a></td>
+	      <td th:text="${user.name}"></td>
+	      <td th:text="${user.email}"></td>
+	      <td style="display: none;" th:text="${user.role}"></td>
+	    </tr>
+	  </tbody>
+	  
+	</table>
+
+<script>
+	function CheckUsers() {
+	  var roleCheck = document.getElementById("roleCheck");
+	  var users = document.querySelectorAll("tbody tr");
+	
+	  for (var i = 0; i < users.length; i++) {
+	    var user = users[i];
+	    var userRole = user.querySelector("td:nth-child(5)").textContent;
+	
+	    if (roleCheck.value === "" || userRole === roleCheck.value) {
+	      user.style.display = "";
+	      
+	    } else {
+	      user.style.display = "none";
+	    }
+	  }
+	}
+	
+</script>	
+	
+	
+</body>
+</html>

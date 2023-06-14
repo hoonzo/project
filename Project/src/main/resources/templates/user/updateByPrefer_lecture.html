@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>선호 항목 수정</title>
+</head>
+<body>
+	<h1>선호 항목 수정</h1>
+    
+    <form action="updateUserPrefer_lecture" method="post" onsubmit="return checkPrefer_lecture()">  
+        <h2>선호하는 항목을 선택해주세요! (중복 가능)</h2><hr>
+		
+		<input type="checkbox" name="prefer_lecture[]" value="piano" th:checked="${#strings.contains(beforePrefer_lecture, 'piano')}">피아노<br />
+		<input type="checkbox" name="prefer_lecture[]" value="guitar" th:checked="${#strings.contains(beforePrefer_lecture, 'guitar')}">기타<br />
+		<input type="checkbox" name="prefer_lecture[]" value="drum" th:checked="${#strings.contains(beforePrefer_lecture, 'drum')}">드럼<br />
+		<input type="checkbox" name="prefer_lecture[]" value="violin" th:checked="${#strings.contains(beforePrefer_lecture, 'violin')}">바이올린<br />
+		<input type="checkbox" name="prefer_lecture[]" value="flute" th:checked="${#strings.contains(beforePrefer_lecture, 'flute')}">플룻<br />
+		<input type="checkbox" name="prefer_lecture[]" value="cello" th:checked="${#strings.contains(beforePrefer_lecture, 'cello')}">첼로<br />
+		<input type="checkbox" name="prefer_lecture[]" value="vocal" th:checked="${#strings.contains(beforePrefer_lecture, 'vocal')}">보컬<br />
+		<input type="checkbox" name="prefer_lecture[]" value="dancing" th:checked="${#strings.contains(beforePrefer_lecture, 'dancing')}">무용<br />
+		<input type="checkbox" name="prefer_lecture[]" value="composition" th:checked="${#strings.contains(beforePrefer_lecture, 'composition')}">작곡<br />
+        
+        <input type="submit" id="submitButton" value="수정">
+    </form>
+    
+    <table>
+        <tr>
+            <td>
+                <div id="checkError" style="color: red; display: none;"></div>
+                <div id="msg" th:text="${msg}" style="display: none;"></div>
+            </td>
+        </tr>
+    </table>
+
+    <script>
+        var form = document.querySelector('form');
+        var submitButton = document.getElementById('submitButton');
+    
+        function checkPrefer_lecture(event) {
+            var prefer_lecture = document.getElementsByName('prefer_lecture[]');
+            var checkError = document.getElementById('checkError');
+            var selectedCount = 0;
+
+            for (var i = 0; i < prefer_lecture.length; i++) {
+                if (prefer_lecture[i].checked) {
+                    selectedCount++;
+                }
+            }
+
+            if (selectedCount === 0) {
+                checkError.innerText = '선호하는 항목을 1개 이상 선택해주세요.';
+                checkError.style.display = 'block';
+                event.preventDefault();
+                return false;
+            } else {
+                checkError.style.display = 'none';
+                return true;
+            }
+        }
+        
+        function msg() {
+            var msgElement = document.getElementById('msg');
+            var msg = msgElement.innerText;
+
+            if (msg !== '') {
+                alert(msg);
+            }
+        }
+        
+        form.addEventListener('submit', checkPrefer_lecture);
+        msg();
+    </script>
+</body>
+</html>

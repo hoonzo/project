@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>정보 수정 페이지</title>
+</head>
+<body>
+
+
+	<form action="passwordUpdate" method="post" align="center">
+		<button>보안 설정</button>
+	</form>
+	<br>
+	
+<h2 align="center">기본 정보</h2>
+<table align="center" th:each="item:${userList}">
+    <tr>
+   		<td>이름</td>
+        <td th:text="${item.name}"></td>
+        <td><button type="button" onclick="updateBy('name')">수정</button></td>
+    </tr>
+    <tr>
+    	<td>이메일</td>
+        <td th:text="${item.email}"></td>
+        <td><button type="button" onclick="updateBy('email')">수정</button></td>
+    </tr>
+    <tr>
+    	<td>연락처</td>
+        <td th:text="${item.phone}"></td>
+        <td><button type="button" onclick="updateBy('phone')">수정</button></td>
+    </tr>
+    <tr>
+    	<td>선호 강의</td>
+        <td th:text="${item.prefer_lecture}"></td>
+        <td><button type="button" onclick="updateBy('prefer_lecture')">수정</button></td>
+    </tr>
+    <tr>
+    	<td>매너 스코어</td>
+        <td th:text="${item.manner_score}"></td>
+        <!-- 추후 리뷰 작성 기능 추가 예정 -->
+    </tr>
+    <tr>
+    	<td>보유 토큰</td>
+        <td th:text="${item.token}"></td>
+    </tr>
+</table>	
+	
+	
+<script>
+	function updateBy(value) {
+	    window.location.href = '/updateBy?paramName=' + encodeURIComponent(value);
+	}
+	
+	
+</script>
+
+
+</body>
+</html>

@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>ID Check</title>
+</head>
+<body>
+  <script>
+    // 팝업 창이 로드되었을 때 부모 창으로 결과를 전달하는 함수
+    function sendResultToParent(result) {
+      window.opener.postMessage(result, "*");
+    }
+    
+    // URL에서 아이디 파라미터 값을 추출하여 처리하는 함수
+    function processIdParameter() {
+      var url = window.location.href;
+      var username = extractIdFromUrl(url);
+      var result = checkIdValidity(username);
+      sendResultToParent(result);
+    }
+    
+    // URL에서 아이디 값을 추출하는 함수
+    function extractIdFromUrl(url) {
+      var params = url.split("?")[1];
+      var username = params.split("=")[1];
+      return username;
+    }
+    
+    // 아이디 유효성을 체크하는 함수 (임의로 작성된 예시)
+    function checkIdValidity(username) {
+      // 아이디 유효성 체크 로직 작성
+      // 예시: 길이가 5 이상인 경우 유효하다고 가정
+      if (username.length >= 5) {
+        return "valid";
+      } else {
+        return "invalid";
+      }
+    }
+    
+    // 페이지 로드 시 아이디 파라미터를 처리하는 함수 호출
+    processIdParameter();
+  </script>
+  
+  
+</body>
+</html>

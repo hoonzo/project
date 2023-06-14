@@ -1,0 +1,9 @@
+Manifest-Version: 1.0
+Built-By: dlwjd
+Build-Jdk: 11.0.16.1
+Implementation-Title: Project
+Implementation-Version: 0.0.1-SNAPSHOT
+Implementation-Vendor-Id: com.ezen
+Implementation-URL: https://spring.io/projects/spring-boot/Project
+Created-By: Maven Integration for Eclipse
+

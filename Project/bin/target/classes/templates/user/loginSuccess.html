@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+	
+	<h2 th:text="|${username}님 환영합니다!|"></h2>
+	
+	<form action="myPage" method="get">
+	    <button>마이페이지</button>
+	</form>
+	
+	<form action="recharge" method="post">
+		<button>토큰 충전하기</button>
+	</form>
+	
+	
+</body>
+</html>

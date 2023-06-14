@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>토큰 충전</title>
+</head>
+<body>
+
+	<h2>토큰 충전 페이지</h2>
+	
+	<form action="rechargeProc" method="post" id="rechargeForm">
+		
+		
+		<input type="text" name="pay" id="pay" placeholder="충전할 토큰의 갯수를 입력하세요." 
+					oninput="change(); clearResult();" style="width: 300px; height: 60px;">
+		<p id="result"></p>
+			
+		
+		<button type="button" onclick="plus1()" style="width: 40px; height: 30px;">1</button>
+		<button type="button" onclick="plus3()" style="width: 40px; height: 30px;">3</button>
+		<button type="button" onclick="plus5()" style="width: 40px; height: 30px;">5</button>
+		<button type="button" onclick="plus10()" style="width: 40px; height: 30px;">10</button>
+		
+		
+		<br><br>
+		결제 수단
+		<select name="paymentMethod" form="rechargeForm">
+		    <option value="card">카드</option>
+		    <option value="cash">계좌 이체</option>
+		</select>
+				
+		<br><br>
+		<input type="submit" value="충전하기">	
+	
+	</form>
+	
+	
+<script>
+	
+	function change() {
+		var pay = document.getElementById("pay").value;
+		var check = /^[0-9]+$/;
+		
+		if(!check.test(pay)) { // 문자열 입력 못하게
+			document.getElementById("pay").value = "";
+			return false;
+		
+		} else if(pay == 0) { // 최초 입력 숫자 0이 될 수 없게
+			document.getElementById("pay").value = "";
+			return false;	
+			
+		} else if(pay > 9998){ // 최대 충전 가능 수량 제한
+			document.getElementById("pay").value = "9999";
+			alert("토큰의 최대 보유 가능한 수량은 9999개 입니다.")
+		
+		} else { 
+			var numberWithCommas = parseFloat(pay).toLocaleString();
+			document.getElementById("pay").value = numberWithCommas;
+			
+			var result = parseFloat(pay) * 10000;
+			var resultWithCommas = result.toLocaleString();
+
+		    document.getElementById("result").textContent = resultWithCommas + "원";
+		    
+		}
+	}
+	
+	function clearResult() {
+	    var pay = document.getElementById("pay").value;
+
+	    if (pay == "") {
+	        document.getElementById("result").textContent = "";
+	    }
+	}
+	
+	function plus1() { 
+		 var pay = document.getElementById("pay");
+		 var changeNum = parseFloat(pay.value);
+		 
+		 if(pay.value == "") {
+			 pay.value = 1;
+			 change();
+			 
+		 } else {
+			 pay.value = changeNum+1; 
+			 change();
+		 }
+	}
+	
+	function plus3() { 
+		 var pay = document.getElementById("pay");
+		 var changeNum = parseFloat(pay.value);
+		 
+		 if(pay.value == "") {
+			 pay.value = 3;
+			 change();
+			 
+		 } else {
+			 pay.value = changeNum+3; 
+			 change();
+		 }
+	}
+	
+	function plus5() { 
+		 var pay = document.getElementById("pay");
+		 var changeNum = parseFloat(pay.value);
+		 
+		 if(pay.value == "") {
+			 pay.value = 5;
+			 change();
+			 
+		 } else {
+			 pay.value = changeNum+5; 
+			 change();
+		 }
+	}
+	
+	function plus10() { 
+		 var pay = document.getElementById("pay");
+		 var changeNum = parseFloat(pay.value);
+		 
+		 if(pay.value == "") {
+			 pay.value = 10;
+			 change();
+			 
+		 } else {
+			 pay.value = changeNum+10; 
+			 change();
+		 }
+	}
+
+
+</script>	
+	
+	
+</body>
+</html>
