@@ -19,7 +19,7 @@ import lombok.Data;
 public class Users {
 	
 	public Users() {
-		this.role = Role.ROLE_USER;
+		this.role = "ROLE_USER";
 	}
 	
 	
@@ -49,8 +49,7 @@ public class Users {
     private double manner_score;
     private double token;
     
-    @Enumerated(EnumType.STRING)  // 권한이 문자열로 저장됨.
-    private Role role; //ROLE_USER, ROLE_ADMIN
+    private String role; //ROLE_USER, ROLE_ADMIN
     
     @CreationTimestamp
     private Timestamp createDate;

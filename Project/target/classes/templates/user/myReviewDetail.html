@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<style>
+    .larger-button {
+        width: 200px;
+        height: 50px;
+        background-color: silver;
+    }
+    
+    th {
+        font-size: 1.3em;
+    }
+    
+    td {
+        font-size: 0.9em;
+    }
+    
+	#checkMessage {
+	  font-size: 24px;
+	  color: lightcoral;
+	  text-align: center;
+	}
+	
+	#message {
+	  color: #ff8888; /* 연한 빨강색으로 설정 */
+	}
+	
+	#impossibleMessage {
+	  color: #ff8888; /* 연한 빨강색으로 설정 */
+	}
+	
+	
+</style>
+
+
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body onload="onloadCheck()">
+	
+	
+		<h2 align="center">내가 작성한 리뷰 상세 보기</h2><br>
+		
+		<table style="width: 100%; border-collapse: separate; border-spacing: 0 10px;">
+		
+			<tbody align="center" th:each="lecture : ${endLectureList}">
+			
+				<tr>
+					<th>강사 번호</th>
+				</tr>
+				
+				<tr>
+					<td><span th:text="${lecture.lector_num}"></span></td>
+				</tr>
+				
+				<tr></tr>
+				
+				<tr>
+					<td><button type="button" onclick="lectorReview()">강사 리뷰</button></td>
+				</tr>
+				
+				<tr></tr><tr></tr>
+		
+				<tr>
+					<th>강의 테마</th>
+				</tr>
+				
+				<tr>
+					<td><span th:text="${lecture.lecture_theme}" id="lectureTheme"></span></td>
+				</tr>
+				
+				<tr></tr><tr></tr>
+				
+				<tr>
+					<th>강의 소개</th>
+				</tr>
+				
+				<tr>	
+					<td><span th:text="${lecture.lecture_introduce}"></span></td>
+				</tr>
+				
+				<tr></tr><tr></tr>
+				
+				<tr>
+					<th>강의 장소</th>
+				</tr>
+				
+				<tr>
+					<td><span th:text="${lecture.lecture_place}"></span></td>
+				</tr>
+				
+				<tr></tr><tr></tr>
+				
+				<tr>
+					<th>강의 시간</th>
+				</tr>
+				
+				<tr>
+				  <td>
+				    <span th:text="${#temporals.format(lecture.lecture_date, 'yyyy년 MM월 dd일')}" id="lectureDate"></span>
+				    <span th:text="${#temporals.format(lecture.lecture_start_time, 'HH시 mm분')}" id="lectureStartTime"></span>
+				    <span>~</span>
+				    <span th:text="${#temporals.format(lecture.lecture_end_time, 'HH시 mm분')}" id="lectureEndTime"></span>
+				  </td>
+				</tr>
+				
+				<tr></tr><tr></tr>
+		
+				<tr>
+					<th>강사 평점</th>
+				</tr>
+				
+				<tr>
+					<td><span th:text="${review_score} + '점!'"></span></td>
+				</tr>
+				
+				<tr></tr><tr></tr>
+
+				<tr>
+					<td>
+						<div style="display: none;" th:text="${lecture.lector_num}" id="lector_num"></div>
+						<div style="display: none;" th:text="${nullCheckMessage}" id="nullCheckMassege"></div>
+					</td>
+				</tr>
+				
+			</tbody>
+			
+		</table>
+		
+		<hr>
+		<h2 align="center">나의 리뷰</h2><hr>
+		
+	<form action="myReviewUpdateProc" method="post">
+	
+		<table id="review" style="width: 100%; border-collapse: separate; border-spacing: 0 10px;">
+			
+			<tbody align="center" th:each="review : ${myReviewList}">
+				
+					<tr></tr><tr></tr>
+					
+				<tr id="message" style="display: none;">
+					<th>등록된 리뷰는 작성 일로부터 일주일 이내에만 수정하실 수 있습니다.</th>
+				</tr>
+				
+				<tr id="impossibleMessage" style="display: none;">
+					<th>해당 리뷰는 작성일로부터 일주일이 경과되어 수정이 불가합니다.</th>
+				</tr>	
+					
+					<tr></tr><tr></tr><tr></tr><tr></tr>
+					
+				<tr>
+					<th>리뷰 내용</th>
+				</tr>
+				
+					<tr></tr>
+				
+				<tr>
+					<td th:text="${review.review_content}" id="review_content"></td>
+				</tr>
+				
+				<tr id="review_contentUpdate" style="display: none;">
+					<td>
+						<button type="button" onclick="review_contentUpdate()">수정</button>
+					</td>
+				</tr>
+				
+					<tr></tr><tr></tr>	
+				
+				<tr>
+					<th>강의 점수</th>
+				</tr>
+				
+				<tr>	
+					<td th:text="${review.lecture_review_score + '점'}" id="lectureReviewScore"></td>
+				</tr>
+				
+				<tr id="lectureScoreUpdate" style="display: none;">
+					<td>
+						<button type="button" onclick="lectureScoreUpdate()">수정</button>
+					</td>
+				</tr>
+				
+					<tr></tr><tr></tr>	
+					
+				<tr>
+					<th>강사 점수</th>
+				</tr>
+				
+				<tr>	
+					<td th:text="${review.lector_review_score + '점'}" id="lectorReviewScore"></td>
+				</tr>
+				
+				<tr id="lectorScoreUpdate" style="display: none;">
+					<td>
+						<button type="button" onclick="lectorScoreUpdate()">수정</button>
+					</td>
+				</tr>
+				
+					<tr></tr><tr></tr>	
+					
+				<tr>
+					<th>작성 시간</th>
+				</tr>
+				
+				<tr>	
+					<td>
+						<span th:text="${#dates.format(review.createDate, 'yyyy년 MM월 dd일 HH시 mm분')}"></span>
+					</td>
+				</tr>
+				
+					<tr></tr><tr></tr><tr></tr><tr></tr>
+				
+				<tr id="submitButton" style="display: none;">
+					<td>
+						<input type="hidden" name="reivew_num" th:value="${review.reivew_num}">
+						<input type="hidden" name="lecture_num" th:value="${review.lecture_num}">
+						<input type="hidden" name="lector_num" th:value="${review.lector_num}">
+						
+						<input type="hidden" name="review_content" 
+									id="hidden_review_content" th:value="${review.review_content}">
+						
+						<input type="hidden" name="lecture_review_score" 
+									id="hidden_lecture_review_score" th:value="${review.lecture_review_score}">
+						
+						<input type="hidden" name="lector_review_score" 
+									id="hidden_lector_review_score" th:value="${review.lector_review_score}">
+					
+						<button type="submit" class="larger-button">제출</button>
+					</td>
+				</tr>
+				
+				<tr>
+					<td>
+						<div style="display: none;" th:text="${review.createDate}" id="reviewCreateDate"></div>
+						<div style="display: none;" th:text="${review.lecture_review_score}" id="lecture_review_score"></div>
+						<div style="display: none;" th:text="${review.lector_review_score}" id="lector_review_score"></div>
+					</td>
+				</tr>
+				
+			</tbody>
+			
+		</table>
+		
+	</form>	
+	
+<script>
+
+	function review_contentUpdate() {
+		var width = 640;
+	    var height = 600;
+	    
+	    var review_content = document.getElementById("review_content").textContent;
+	    
+	    var popupOptions = 'width=' + width + ', height=' + height + ', resizable=yes, scrollbars=yes';
+    	var url = 'review_contentUpdate?review_content=' + review_content;
+    	 
+	    window.open(url, '_blank', popupOptions);
+	}
+
+	function updateReview_content(newReview_content) {
+		var review_content = document.getElementById("review_content");
+		var hidden_review_content = document.getElementById("hidden_review_content");
+		
+		review_content.textContent = newReview_content;
+		hidden_review_content.value = newReview_content
+	}
+	
+	
+	function lectureScoreUpdate() {
+		var width = 640;
+	    var height = 600;
+	    
+	    var lecture_review_score = document.getElementById("lecture_review_score").textContent;
+	    
+	    var popupOptions = 'width=' + width + ', height=' + height + ', resizable=yes, scrollbars=yes';
+    	var url = 'lectureScoreUpdate?lecture_review_score=' + lecture_review_score;
+    	 
+	    window.open(url, '_blank', popupOptions);
+	}
+
+	function updateLectureScore(newLecture_review_score) {
+		var lectureReviewScore = document.getElementById("lectureReviewScore");
+		var hidden_lecture_review_score = document.getElementById("hidden_lecture_review_score");
+		
+		lectureReviewScore.textContent = newLecture_review_score + ".0점";
+		hidden_lecture_review_score.value = newLecture_review_score;
+	}
+	
+	
+	
+	function lectorScoreUpdate() {
+		var width = 640;
+	    var height = 600;
+	    
+	    var lector_review_score = document.getElementById("lector_review_score").textContent;
+	    
+	    var popupOptions = 'width=' + width + ', height=' + height + ', resizable=yes, scrollbars=yes';
+    	var url = 'lectorScoreUpdate?lector_review_score=' + lector_review_score;
+    	 
+	    window.open(url, '_blank', popupOptions);
+	}
+	
+	function updateLectorScore(newLector_review_score) {
+		var lectorReviewScore = document.getElementById("lectorReviewScore");
+		var hidden_lector_review_score = document.getElementById("hidden_lector_review_score");
+		
+		lectorReviewScore.textContent = newLector_review_score + ".0점";
+		hidden_lector_review_score.value = newLector_review_score;
+	}
+	
+	
+	
+	function onloadCheck() {
+		var reviewCreateDate = document.getElementById("reviewCreateDate").textContent;
+		var dateParts = reviewCreateDate.split('-');
+		
+		var year = parseInt(dateParts[0], 10);
+		var month = parseInt(dateParts[1], 10) - 1;
+		var day = parseInt(dateParts[2], 10);
+		
+		var createDate = new Date(year, month, day); // 리뷰 작성 시간
+		
+		var after7dayCreateDate = new Date(createDate.getTime()); // 일주일 이후의 시간
+		after7dayCreateDate.setDate(after7dayCreateDate.getDate() + 7);
+		
+		var nowDate = new Date(); // 현재 시간
+		
+		var message = document.getElementById("message");
+		var impossibleMessage = document.getElementById("impossibleMessage");
+		
+		var review_contentUpdate = document.getElementById("review_contentUpdate");
+		var lectureScoreUpdate = document.getElementById("lectureScoreUpdate");
+		var lectorScoreUpdate = document.getElementById("lectorScoreUpdate");
+		var submitButton = document.getElementById("submitButton"); 
+		
+		
+		if(nowDate < after7dayCreateDate) {
+			message.style.display = "";
+			
+			review_contentUpdate.style.display = "";
+			lectureScoreUpdate.style.display = "";
+			lectorScoreUpdate.style.display = "";
+			
+			submitButton.style.display = "";
+			
+		} else {
+			impossibleMessage.style.display = "";
+		}
+	}
+
+	function lectorReview() {
+		var lector_num = document.getElementById("lector_num").textContent;
+		
+		window.location.href = "lectorReview?lector_num=" + lector_num;
+	}
+
+</script>
+	
+	
+</body>
+</html>

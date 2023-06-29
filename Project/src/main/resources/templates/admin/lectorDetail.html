@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>강사 승인</title>
+
+
+<style>
+.larger-button {
+	width: 200px;
+	height: 50px;
+	background-color: silver;
+}
+
+.center-align {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	height: 50vh;
+}
+
+table {
+	margin: 0 auto;
+}
+</style>
+
+
+</head>
+<body>
+
+
+	<h2 align="center">강사 승인</h2>
+	<br><hr>
+	
+	<div class="center-align">
+		<table
+			style="width: 100%; border-collapse: separate; border-spacing: 0 10px;">
+
+			<tbody>
+				<tr th:each="lector : ${lectorDetailList}">
+					<th>강사 번호</th>
+					<td><span th:text="${lector.lector_num}"></span></td>
+				</tr>
+
+				<tr th:each="lector : ${lectorDetailList}">
+					<th>유저 번호</th>
+					<td><span th:text="${lector.user_id}"></span></td>
+				</tr>
+
+				<tr th:each="lector : ${lectorDetailList}">
+					<th>강의 테마</th>
+					<td><span th:text="${lector.lecture_theme}"></span></td>
+				</tr>
+
+				<tr th:each="lector : ${lectorDetailList}">
+					<th>강사 커리어</th>
+					<td><span th:text="${lector.career}"></span></td>
+				</tr>
+
+				<tr th:each="lector : ${lectorDetailList}">
+					<th>강의실 보유 여부</th>
+					<td><span th:text="${lector.have_lecture_room}"></span></td>
+				</tr>
+
+
+				<tr th:each="lector : ${lectorDetailList}">
+					<th>강의실 주소</th>
+					<td><span th:text="${lector.lecture_room_address}"></span></td>
+				</tr>
+
+
+				<tr th:each="lector : ${lectorDetailList}">
+					<th>선호 수강 인원</th>
+					<td><span th:text="${lector.prefer_personnel}"></span></td>
+				</tr>
+
+				<tr th:each="lector : ${lectorDetailList}">
+					<th>멤버쉽 가입 여부</th>
+					<td><span th:text="${lector.membership}"></span></td>
+				</tr>
+
+
+				<tr th:each="lector : ${lectorDetailList}">
+					<th>멤버쉽 기간</th>
+					<td><span th:text="${lector.membership_Type}"></span></td>
+				</tr>
+
+				<tr th:each="lector : ${lectorDetailList}">
+					<th>승인 여부</th>
+					
+					<td>
+						<form th:action="@{/permissionDecision}" method="post">
+							<select name="permissionDecision">
+								<option value="X">반려
+								<option value="O">승인
+							</select>
+							
+							<input type="hidden" name="lector_num" th:value="${lector.lector_num}">
+							<input type="hidden" name="user_id" th:value="${lector.user_id}">
+							<button type="submit">입력</button>
+						</form>
+					</td>
+				</tr>
+				
+
+			</tbody>
+
+		</table>
+	</div>
+
+	<div style="display: flex; justify-content: center;">
+		
+	    <form action="lectorsPermission" method="get">
+	        <button class="larger-button">돌아가기</button>
+	    </form>
+	</div>
+
+</body>
+</html>

@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html xmlns="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>단순히 타임리프 데이터 받아오는 곳</title>
+</head>
+<body>
+
+	<h2 th:text="${practiceRoom_address}" id="roomAddress"></h2>
+	<h2 th:text="${rentalStartTime}" id="rentalStartTime"></h2>
+	<h2 th:text="${practiceRoom_id}" id="practiceRoom_id"></h2>
+	<h2 th:text="${rentalDate}" id="rentalDate"></h2>
+	
+	
+<script>
+	function lecturePlace() {
+		
+		var roomAddress = document.getElementById("roomAddress").textContent;
+		
+		var parentElement = window.opener.document.getElementById("lecture_room_address");
+		var parentElement2 = window.opener.document.getElementById("newLecturePlace");
+		var parentHiddenElement = window.opener.document.getElementById("hiddenLecturePlace");
+		
+		parentElement.textContent = roomAddress;
+		parentElement2.textContent = roomAddress;
+		parentHiddenElement.value = roomAddress;
+		
+		
+		var rentalStartTime = document.getElementById("rentalStartTime").textContent;
+		var practiceRoom_id = document.getElementById("practiceRoom_id").textContent;
+		var rentalDate = document.getElementById("rentalDate").textContent;
+		
+		var rentalStartTimeElement = window.opener.document.getElementById("rentalStartTime");
+		var practiceRoom_idElement = window.opener.document.getElementById("practiceRoom_id");
+		var rentalDateView = window.opener.document.getElementById("rentalDateView");
+		
+		rentalStartTimeElement.value = rentalStartTime;
+		practiceRoom_idElement.value = practiceRoom_id;
+		
+		var intEndTime = parseInt(rentalStartTime, 10) + 2;
+		var formattedDate = new Date(rentalDate).toLocaleDateString("ko-KR", {
+			  year: "numeric",
+			  month: "long",
+			  day: "numeric"
+			});
+		rentalDateView.textContent = '연습실 예약 일시 : ' + formattedDate + ' ' +  rentalStartTime + '시  ~ ' + intEndTime + '시';
+		
+		
+		var rentalCheck = window.opener.document.getElementById("rentalCheck");
+		
+		rentalCheck.value = 'O';
+		
+		
+		window.close();
+	}
+
+	lecturePlace();
+</script>	
+	
+	
+</body>
+</html>

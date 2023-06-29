@@ -1,18 +1,28 @@
 <!DOCTYPE html>
 <html>
 <head>
+
+<style>
+    .larger-button {
+        width: 200px;
+        height: 50px;
+        background-color: silver;
+    }	
+</style>
+
 <meta charset="UTF-8">
 <title>토큰 충전</title>
 </head>
 <body>
 
-	<h2>토큰 충전 페이지</h2>
-	
-	<form action="rechargeProc" method="post" id="rechargeForm">
+	<h2 align="center">토큰 충전 페이지</h2>
+	<br><br>
+	<form action="rechargeProc" method="get" id="rechargeForm" align="center">
 		
 		
 		<input type="text" name="pay" id="pay" placeholder="충전할 토큰의 갯수를 입력하세요." 
 					oninput="change(); clearResult();" style="width: 300px; height: 60px;">
+		<p id="commission"></p>		
 		<p id="result"></p>
 			
 		
@@ -28,9 +38,9 @@
 		    <option value="card">카드</option>
 		    <option value="cash">계좌 이체</option>
 		</select>
-				
-		<br><br>
-		<input type="submit" value="충전하기">	
+					
+		<br><br><br><br>
+		<input type="submit" value="충전하기" class="larger-button">	
 	
 	</form>
 	
@@ -57,10 +67,14 @@
 			var numberWithCommas = parseFloat(pay).toLocaleString();
 			document.getElementById("pay").value = numberWithCommas;
 			
-			var result = parseFloat(pay) * 10000;
+			var commission = parseFloat(pay) * 10000 * 0.1;
+			var result = parseFloat(pay) * 10000 + parseFloat(commission);
+			
+			
+			var commissionWithCommas = commission.toLocaleString();
 			var resultWithCommas = result.toLocaleString();
-
-		    document.getElementById("result").textContent = resultWithCommas + "원";
+			
+		    document.getElementById("result").textContent = "결제 예상 금액 : " + resultWithCommas + "원";
 		    
 		}
 	}

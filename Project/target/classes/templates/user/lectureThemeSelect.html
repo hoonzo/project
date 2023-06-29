@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<style>
+    .larger-button {
+        width: 200px;
+        height: 50px;
+        background-color: silver;
+    }	
+</style>
+
+<meta charset="UTF-8">
+<title>테마 선택</title>
+</head>
+<body>
+	
+	<br><br>
+	<h2 align="center">수강을 원하시는 수업 테마를 선택해주세요.</h2>
+	<br><br>
+	
+	<form action="lectorThemeSelectProc" method="get" align="center" id="lectorThemeSelectProc" onsubmit="return validateForm()">	
+		
+		<input type="checkbox" name="lecture_theme" value="all">전체 보기<br/>
+		<input type="checkbox" name="lecture_theme" value="piano">피아노<br/>
+		<input type="checkbox" name="lecture_theme" value="guitar">기타<br/>
+		<input type="checkbox" name="lecture_theme" value="drum">드럼<br/>
+		<input type="checkbox" name="lecture_theme" value="violin">바이올린<br/>
+		<input type="checkbox" name="lecture_theme" value="flute">플룻<br/>
+		<input type="checkbox" name="lecture_theme" value="cello">첼로<br/>
+		<input type="checkbox" name="lecture_theme" value="vocal">보컬<br/>
+		<input type="checkbox" name="lecture_theme" value="dancing">무용<br/>
+		<input type="checkbox" name="lecture_theme" value="composition">작곡<br/>
+		
+		<br><br>
+		<button type="submit">입력</button>
+	</form>	 
+	
+<script>
+	function validateForm() {
+	    var lecture_theme = document.querySelector('input[name="lecture_theme"]:checked');
+	
+	    if (!lecture_theme) {
+	        alert("수업 테마를 선택해주세요.");
+	        return false;
+	        
+	    } else {
+	    	
+	        if (lecture_theme.value === "all") {
+	        	
+	            var otherCheckboxes = document.querySelectorAll('input[name="lecture_theme"]:not([value="all"]):checked');
+	           
+	            if (otherCheckboxes.length > 0) {
+	            	
+	                alert("전체 보기가 선택된 경우 다른 수업 테마를 선택할 수 없습니다.");
+	                resetCheckboxes();
+	                return false;
+	            }
+	        }
+	        return true;
+	    }
+	}
+	
+	function resetCheckboxes() {
+	    var checkboxes = document.querySelectorAll('input[name="lecture_theme"]:checked');
+	    for (var i = 0; i < checkboxes.length; i++) {
+	        checkboxes[i].checked = false;
+	    }
+	}
+	
+</script>
+
+
+</body>
+</html>

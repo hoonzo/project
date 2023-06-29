@@ -1,14 +1,17 @@
 package com.ezen.Service;
 
-import java.util.List;
+import java.util.List; 
 
 import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import com.ezen.Repository.UserRepository;
-import com.ezen.model.UserDTO;
 import com.ezen.model.Users;
 
 @Service
@@ -103,6 +106,59 @@ public class UserService {
 	public void deleteById(int id) {
 		userRepository.deleteById(id);
 	}
+	
+	@Transactional
+	public void getUpdateRole(int id) {
+		userRepository.changeRole(id);
+	}
+	
+	
+	// 페이징 기능 설명
+	public Page<Users> getPagingUserlist(Pageable pageable) {
+		Pageable pageRequest = PageRequest.of(pageable.getPageNumber(), 4, Sort.by(Sort.Direction.DESC, "id"));
+	    return userRepository.findAll(pageRequest);
+	    
+	    // int page = 1; // 요청 페이지
+	    // int pageSize = 3; // 페이지당 항목 수
+	    // Sort sort = Sort.by(Sort.Direction.DESC, "id"); // 정렬 기준
+	    // Pageable pageable = PageRequest.of(page, pageSize, sort);
+	}
+	
+	// 검색 기능
+	public Page<Users> searchUserById(String keyword, Pageable pageable) {
+		Pageable pageRequest = PageRequest.of(pageable.getPageNumber(), 4, Sort.by(Sort.Direction.DESC, "id"));
+		return userRepository.searchUserById(keyword, pageRequest);
+	}
+	
+	public Page<Users> searchUserByIdAndRole(String keyword, String role, Pageable pageable) {
+		Pageable pageRequest = PageRequest.of(pageable.getPageNumber(), 4, Sort.by(Sort.Direction.DESC, "id"));
+		return userRepository.searchUserByIdAndRole(keyword, role, pageRequest);
+	}
+	
+	public Page<Users> searchUserByUsername(String keyword, Pageable pageable) {
+		Pageable pageRequest = PageRequest.of(pageable.getPageNumber(), 4, Sort.by(Sort.Direction.DESC, "id"));
+		return userRepository.searchUserByUsername(keyword, pageRequest);
+	}
+	
+	public Page<Users> searchUserByUsernameAndRole(String keyword, String role, Pageable pageable) {
+		Pageable pageRequest = PageRequest.of(pageable.getPageNumber(), 4, Sort.by(Sort.Direction.DESC, "id"));
+		return userRepository.searchUserByUsernameAndRole(keyword, role, pageRequest);
+	}
+	
+	public Page<Users> searchUserByName(String keyword, Pageable pageable) {
+		Pageable pageRequest = PageRequest.of(pageable.getPageNumber(), 4, Sort.by(Sort.Direction.DESC, "id"));
+		return userRepository.searchUserByName(keyword, pageRequest);
+	}
+	
+	public Page<Users> searchUserByNameAndRole(String keyword, String role, Pageable pageable) {
+		Pageable pageRequest = PageRequest.of(pageable.getPageNumber(), 4, Sort.by(Sort.Direction.DESC, "id"));
+		return userRepository.searchUserByNameAndRole(keyword, role, pageRequest);
+	}
+	
+	
+	
+	
+	
 	
 	
 	

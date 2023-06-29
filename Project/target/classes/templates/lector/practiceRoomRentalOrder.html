@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<style>
+	.larger-button {
+		width: 200px;
+		height: 50px;
+		background-color: silver;
+		align: center;
+	}
+	
+	table {
+        margin: 0 auto;
+        border-collapse: separate;
+        border-spacing: 30px;
+    }
+    
+    th {
+        font-size: 1.2em;
+    }
+    
+    h2 {
+    	font-size: 1.8em;
+    }
+   
+</style>
+
+<meta charset="UTF-8">
+<title>연습실 대여</title>
+</head>
+<body style="text-align: center;">
+	
+	<h2 align="center">연습실 결제</h2>
+	<hr>
+	
+	
+	<form action="practiceRoomRentalOrderProc" method="post" id="rentalForm" align="center">
+	
+		<table align="center" style="width: 100%; border-collapse: separate; border-spacing: 0 10px;">
+	
+			<tbody align="center" th:each="item : ${practiceRoomList}">
+				
+				<tr>
+					<th>연습실 주소</th>
+				</tr>
+			
+				<tr>
+					<td th:text="${item.practiceRoom_address}"></td>
+				</tr>
+				
+				<tr></tr><tr></tr>
+				
+				<tr>
+					<th>최대 수용 인원</th>
+				</tr>
+				
+				<tr>
+					<td th:text="${item.practiceRoom_maxPersonnel + '명'}"></td>
+				</tr>
+				
+				<tr></tr><tr></tr>
+				
+				<tr>
+					<th>대여 비용</th>
+				</tr>
+				
+				<tr>
+					<td th:text="${'TOKEN ' + item.practiceRoom_price + '개'}"></td>
+				</tr>
+				
+				
+
+			</tbody>
+			
+			<tr>
+                <th><br>대여 시간</th>
+            </tr>
+            
+            <tr>
+            	<td>
+            		<input type="date" id="lecture_date" name="rentalDate" onchange="dateCheck()">
+            		
+            		<label for="lecture_start_time">시작</label>
+					<select name="rentalStartTime" id="lecture_start_time" onchange="startTimeCheck()" disabled>
+					        <option value="0">00:00</option>
+					        <option value="2">02:00</option>
+					        <option value="4">04:00</option>
+					        <option value="6">06:00</option>
+					        <option value="8">08:00</option>
+					        <option value="10">10:00</option>
+					        <option value="12">12:00</option>
+					        <option value="14">14:00</option>
+					        <option value="16">16:00</option>
+					        <option value="18">18:00</option>
+					        <option value="20">20:00</option>
+					        <option value="22">22:00</option>
+					</select>
+					
+					<label for="lecture_end_time">종료</label>
+					<select id="lecture_end_time" disabled>
+					        <option value="0">00:00</option>
+					        <option value="2">02:00</option>
+					        <option value="4">04:00</option>
+					        <option value="6">06:00</option>
+					        <option value="8">08:00</option>
+					        <option value="10">10:00</option>
+					        <option value="12">12:00</option>
+					        <option value="14">14:00</option>
+					        <option value="16">16:00</option>
+					        <option value="18">18:00</option>
+					        <option value="20">20:00</option>
+					        <option value="22">22:00</option>
+					</select>
+            	</td>
+            </tr>
+            
+            
+           	<tr></tr><tr></tr><tr></tr><tr></tr>
+           	
+            <tr>
+				<th>토큰 보유 수량</th>
+			</tr>
+            
+            <tr>
+				<td th:text="${token} + '개'"> 
+				</td>
+			</tr>
+            
+            <tr th:each="item : ${practiceRoomList}">
+            
+            	<td th:text="${token}" id= "myToken" style="display: none;"></td>
+            	<td th:text="${item.practiceRoom_price}" id="price" style="display: none;"></td>
+            	
+            	
+				<td>
+					<br>
+					<input type="hidden" name="practiceRoom_id" th:value="${item.practiceRoom_id}">
+					<button type="submit" class="larger-button" onclick="validateForm(); return false;">입력</button>
+				</td>
+			</tr>
+	
+		</table>
+	</form>
+	
+<script>
+	function validateForm() {
+		var lecture_date = document.getElementById("lecture_date").value;
+		var lecture_start_time = document.getElementById("lecture_start_time").value;
+		
+		var price = parseInt(document.getElementById("price").innerText, 10);
+		var myToken = parseInt(document.getElementById("myToken").innerText, 10);
+		
+		if(!lecture_date) {
+			alert("수업 날짜를 입력해주세요.");
+	        return false;
+	        
+		} else {
+			
+			if(myToken < price) {
+				var result = confirm("토큰이 모자랍니다.\n충전하시겠습니까?");
+				
+				if (result) {
+					window.location.href = "recharge";
+				
+				} else {
+					window.close();
+					alert("예약이 취소되었습니다.");
+				}
+				
+			} else {
+				document.getElementById("rentalForm").submit();
+			}
+		}
+	}
+	
+	function dateCheck() {
+		var startTimeInput = document.getElementById("lecture_start_time");
+		var endTimeInput = document.getElementById("lecture_end_time");
+		
+		// 입력값
+		var lecture_date = document.getElementById("lecture_date").value;
+		var dateParts = lecture_date.split('-');
+		
+		var selectYear = parseInt(dateParts[0], 10);
+		var selectMonth = parseInt(dateParts[1], 10);
+		var selectDay = parseInt(dateParts[2], 10);
+		
+		// 오늘 날짜 받아오기
+		var today = new Date();
+		var equalsYear = parseInt(today.getFullYear(), 10);
+		var equalsMonth = parseInt(String(today.getMonth() + 1).padStart(2, '0'), 10);
+		var equalsDay = parseInt(String(today.getDate()).padStart(2, '0'), 10);
+		
+		if(selectYear < equalsYear) { // 년도 확인
+			document.getElementById("lecture_date").value = "";
+			
+			startTimeInput.value = "";
+			startTimeInput.disabled = true;
+			
+			endTimeInput.value = "";
+			endTimeInput.disabled = true;
+			
+			alert("적합한 년도를 선택해주십시오.")
+			
+		} else if(selectYear === equalsYear && selectMonth < equalsMonth) { // 달 확인
+			document.getElementById("lecture_date").value = "";
+		
+			startTimeInput.value = "";
+			startTimeInput.disabled = true;
+			
+			endTimeInput.value = "";
+			endTimeInput.disabled = true;
+			
+			alert("적합한 달을 선택해주십시오.")
+			
+		} else if(selectYear === equalsYear && selectMonth === equalsMonth && selectDay < equalsDay) { // 일 확인
+			document.getElementById("lecture_date").value = "";
+		
+			startTimeInput.value = "";
+			startTimeInput.disabled = true;
+			
+			endTimeInput.value = "";
+			endTimeInput.disabled = true;
+			
+			alert("적합한 일자를 선택해주십시오.")
+			
+		} else {
+			startTimeInput.disabled = false;
+		}
+	}
+	
+	function startTimeCheck() {
+		// 입력값
+		var lecture_date = document.getElementById("lecture_date").value;
+		var dateParts = lecture_date.split('-');
+		
+		var selectYear = parseInt(dateParts[0], 10);
+		var selectMonth = parseInt(dateParts[1], 10);
+		var selectDay = parseInt(dateParts[2], 10);
+		
+		// 오늘 날짜 받아오기
+		var today = new Date();
+		var equalsYear = parseInt(today.getFullYear(), 10);
+		var equalsMonth = parseInt(String(today.getMonth() + 1).padStart(2, '0'), 10);
+		var equalsDay = parseInt(String(today.getDate()).padStart(2, '0'), 10);
+		
+		// 옵션 선택 값 받아오기
+		var lecture_start_time = document.getElementById("lecture_start_time");
+		var selectedOption = lecture_start_time.selectedOptions[0];
+		var startTimeValue = selectedOption.value; // 2, 4, 6, 8, 10... 
+		
+		// 현재 시간 받아오기
+		var nowTime = new Date(); // 3, 5, 8, 11, 15...
+		var nowHours = parseInt(nowTime.getHours());
+		
+		//선택일이 오늘일 경우,
+		if(selectYear === equalsYear && selectMonth === selectMonth && selectDay === equalsDay) {
+			
+			if(startTimeValue < nowHours || startTimeValue == nowHours) {
+				document.getElementById("lecture_start_time").value = "";
+				lecture_end_time.disabled = true;
+				alert("적합한 시간을 선택해주십시오.")
+		
+			} else {
+				var endTimeValue = parseInt(startTimeValue, 10) + 2;
+				document.getElementById("lecture_end_time").value = endTimeValue.toString();
+				
+			}
+		
+		//오늘이 아닐 경우, 
+		} else { 
+			var endTimeValue = parseInt(startTimeValue, 10) + 2;
+			document.getElementById("lecture_end_time").value = endTimeValue.toString();
+		}
+	}
+
+
+</script>	
+</body>
+</html>

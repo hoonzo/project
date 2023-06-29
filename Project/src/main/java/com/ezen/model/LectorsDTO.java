@@ -11,7 +11,7 @@ import lombok.ToString;
 @ToString
 public class LectorsDTO {
 	
-	private int lecture_num;
+	private int lector_num;
 	private int user_id;
 	private String have_lecture_room;
 	private String lecture_room_address;
@@ -20,7 +20,8 @@ public class LectorsDTO {
 	private String career;
 	private double review_score;
 	private String membership;
-	private String membershipType;
+	private String membership_Type;
+	private String admin_Permission;
 	private Timestamp createDate;
 
 }

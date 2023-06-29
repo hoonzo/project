@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<style>
+    .larger-button {
+        width: 200px;
+        height: 50px;
+        background-color: silver;
+    }
+    
+    th {
+        font-size: 1.3em;
+    }
+    
+    td {
+        font-size: 0.9em;
+    }
+    
+	#userMessage {
+	  display: none;
+	  font-size: 24px;
+	  color: lightcoral;
+	  text-align: center;
+	}
+	
+	
+</style>
+
+
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+	
+	<form action="lectureReservation" method="get">
+		<h2 align="center">강의 상세보기</h2><br>
+		
+		<br><div id="userMessage">예약한 강의입니다!</div><br><br>
+		
+		<table style="width: 100%; border-collapse: separate; border-spacing: 0 10px;">
+		
+			<tbody align="center" th:each="lecture : ${lectureDetailList}">
+			
+				<tr>
+					<th>강사 번호</th>
+				</tr>
+				
+				<tr>
+					<td><span th:text="${lecture.lector_num}"></span></td>
+				</tr>
+				
+				<tr></tr>
+				
+				<tr>
+					<td><button type="button" onclick="endLectureViewByLector_num()">강사의 이전 강의</button></td>
+				</tr>
+				
+				<tr>
+					<td><button type="button" onclick="lectorReview()">강사 리뷰 열람</button></td>
+				</tr>
+				
+				<tr></tr><tr></tr>
+		
+				<tr>
+					<th>강의 테마</th>
+				</tr>
+				
+				<tr>
+					<td><span th:text="${lecture.lecture_theme}" id="lectureTheme"></span></td>
+				</tr>
+				
+				<tr></tr><tr></tr>
+				
+				<tr>
+					<th>강의 소개</th>
+				</tr>
+				
+				<tr>	
+					<td><span th:text="${lecture.lecture_introduce}"></span></td>
+				</tr>
+				
+				<tr></tr><tr></tr>
+				
+				<tr>
+					<th>강의 장소</th>
+				</tr>
+				
+				<tr>
+					<td><span th:text="${lecture.lecture_place}"></span></td>
+				</tr>
+				
+				<tr></tr><tr></tr>
+				
+				<tr>
+					<th>강의 시간</th>
+				</tr>
+				
+				<tr>
+				  <td>
+				    <span th:text="${#temporals.format(lecture.lecture_date, 'yyyy년 MM월 dd일')}" id="lectureDate"></span>
+				    <span th:text="${#temporals.format(lecture.lecture_start_time, 'HH시 mm분')}" id="lectureStartTime"></span>
+				    <span>~</span>
+				    <span th:text="${#temporals.format(lecture.lecture_end_time, 'HH시 mm분')}" id="lectureEndTime"></span>
+				  </td>
+				</tr>
+				
+				<tr></tr><tr></tr>
+		
+				<tr>
+					<th>강사 평점</th>
+				</tr>
+				
+				<tr>
+					<td><span th:text="${review_score} + '점!'"></span></td>
+				</tr>
+				
+				<tr></tr><tr></tr>
+				
+				<tr>
+					<th>잔여 수강 인원</th>
+				</tr>
+				
+				<tr>
+					<td><span th:text="'예약 마감까지 ' + ${remainder} + '자리 남았습니다.'"></span></td>
+				</tr>
+				
+				<tr></tr><tr></tr>
+				
+				<tr>
+					<th>수강 비용</th>
+				</tr>
+				
+				<tr>
+					<td><span th:text="'토큰 ' + ${#numbers.formatInteger(lecture.price, 1)} + '개'" id="lecturePrice"></span></td>
+				</tr>
+				
+				<tr></tr><tr></tr>
+				
+				<tr>
+					<td>
+						<div style="display: none;" th:text="${user_id}" id="user_id"></div>
+						<div style="display: none;" th:each="userNum : ${userNumArray}" th:text="${userNum}" class="userNum"></div>
+						
+						<div style="display: none;" th:text="${lecture.lecture_num}" id="lecture_num"></div>
+						<div style="display: none;" th:text="${lecture.lector_num}" id="lector_num"></div>
+						<div style="display: none;" th:text="${lecture.lecture_title}" id="lecture_title"></div>
+						
+						<div style="display: none;" th:text="${myToken}" id="myToken"></div>
+						<div style="display: none;" th:text="${lecture.price}" id="lecture_price"></div>
+						
+						<button class="larger-button" type="button" onclick="reservationCheck()">예약</button>
+					</td>
+				</tr>
+				
+			</tbody>
+			
+			
+			
+			
+			
+		</table>
+	</form>	
+	
+<script>
+
+	function lectorReview() {
+		var lector_num = document.getElementById("lector_num").textContent;
+		
+		window.location.href = "lectorReview?lector_num=" + lector_num;
+	}
+
+	function endLectureViewByLector_num() {
+		var lector_num = document.getElementById("lector_num").textContent;
+		
+		window.location.href = "endLectureViewByLector_num?lector_num=" + lector_num;
+	}
+
+
+	function reservationCheck() {
+		var lectureTheme = document.getElementById("lectureTheme").textContent;
+		
+		var lectureDate = document.getElementById("lectureDate").textContent;
+		var lectureStartTime = document.getElementById("lectureStartTime").textContent;
+		var lectureEndTime = document.getElementById("lectureEndTime").textContent;
+		
+		var lecturePrice = document.getElementById("lecturePrice").textContent;
+		
+		var lecture_num = document.getElementById("lecture_num").textContent;
+		var lector_num = document.getElementById("lector_num").textContent;
+		var lecture_title = document.getElementById("lecture_title").textContent;
+		
+		var myToken = parseFloat(document.getElementById("myToken").textContent);
+		var lecture_price = parseFloat(document.getElementById("lecture_price").textContent);
+		
+		if(lecture_price > myToken) {
+			
+			var result = confirm("토큰이 부족합니다. 충전하시겠습니까?");
+
+			if (result) {
+			window.location.href = "recharge";
+		
+			} else {
+			window.location.href = "lectureListView";
+			alert("예약이 취소되었습니다.");
+			}
+			
+		} else {
+			var result = confirm("선택하신 강의는 " + lectureTheme + "이고,\n" + 
+									"강의 시간은 " + lectureDate + lectureStartTime + " ~ " + lectureEndTime + "입니다.\n" + 
+									"수강 비용은 " + lecturePrice + "입니다.\n" +
+									"해당 클래스를 예약하시겠습니까?");
+
+			if (result) {
+			window.location.href = "lectureReservation?lecture_num=" + lecture_num + "&lector_num=" + lector_num
+							+ "&lecture_title=" + lecture_title + "&price=" + lecture_price;
+			alert("예약이 완료되었습니다.");
+			
+			} else {
+			window.location.href = "lectureListView";
+			alert("예약이 취소되었습니다.");
+			}
+		}
+	}
+
+	
+	function reservationUser_idCheck() {
+		var userMessage = document.getElementById("userMessage");
+		
+		var user_id = document.getElementById("user_id").textContent;
+
+		var userNumArray = [];
+		var userNumElements = document.getElementsByClassName("userNum");
+
+		for (var i = 0; i < userNumElements.length; i++) {
+			userNumArray.push(userNumElements[i].textContent);
+		}
+
+		// 반복문을 사용하여 배열 요소에 접근
+		for (var i = 0; i < userNumArray.length; i++) {
+			
+			if (userNumArray[i] === user_id) {
+				userMessage.style.display = "block";
+				document.querySelector(".larger-button").disabled = true;
+			}
+		}
+	}
+	
+	reservationUser_idCheck();
+</script>
+	
+	
+</body>
+</html>

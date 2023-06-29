@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html xmlns="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>강의실 업데이트</title>
+
+<style>
+.larger-button {
+	width: 200px;
+	height: 50px;
+	background-color: silver;
+	align: center;
+}
+</style>
+
+</head>
+<body>
+	<h2 align="center">강의실 주소</h2>
+
+	<form id="lecture_room_addressForm" action="insertLecture_room_address_Proc" method="post"
+		align="center">
+		<table>
+			<tr>
+				<td><input type="text" name="lecture_room_address_value" id="lecture_room_address_value"
+					th:placeholder="${lecture_room_address_value}" style="width: 600px; height: 100px">
+				</td>
+			</tr>
+
+			<tr>
+				<td>
+					<button type="submit" class="larger-button">수정</button>
+				</td>
+			</tr>
+		</table>
+	</form>
+
+	<script>
+		document.getElementById("lecture_room_addressForm").addEventListener("submit", function(event) {
+			event.preventDefault(); // 기본 제출 동작 막기
+			var form = event.target;
+			var formData = new FormData(form);
+			
+			fetch(form.action, {
+				method: form.method,
+				body: formData
+			})
+			.then(function(response) {
+				if (response.ok) {
+					closePopup(); // 데이터 전송 후 팝업 창 닫기
+				}
+			});
+		});
+	
+		function closePopup() {
+			window.close(); // 팝업 창 닫기
+			window.opener.location.reload(); // 부모 창 새로 고침
+		}
+	</script>
+</body>
+</html>

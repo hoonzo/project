@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>리뷰 작성</title>
+
+<style>
+	.larger-button {
+		width: 200px;
+		height: 50px;
+		background-color: silver;
+		text-align: center;
+	}
+	
+	table {
+        margin: 0 auto;
+        border-collapse: separate;
+        border-spacing: 30px; /* 원하는 간격 값으로 조정 */
+        text-align: center;
+    }
+    
+    th {
+        font-size: 1.2em;
+        text-align: center;
+    }
+    
+    h2 {
+    	font-size: 1.8em;
+    	text-align: center;
+    }
+    
+    #rentalDateView {
+	  color: red;
+	  font-size: 18px;
+	}
+   
+   
+</style>
+
+
+</head>
+<body onload="reviewCheck()">
+	
+	<h2 align="center">리뷰 작성</h2>
+	
+	<form action="writeReviewProc" method="post" onsubmit="return validateForm()">
+		
+		<table align="center">
+		
+			<tbody th:each="item : ${lectureList}">
+
+                <tr>
+                    <th>강의 테마</th>
+                </tr>
+                
+                <tr>
+                	<td th:text="${item.lecture_theme}"></td>
+                </tr>
+                
+                <tr>
+                    <th><br>강의 제목</th>
+                </tr>
+                
+                 <tr>
+                	<td th:text="${item.lecture_title}"></td>
+                </tr>
+                
+                <tr>
+                    <th><br>수강하셨던 강의의 후기를 작성해주세요</th>
+                </tr>
+                
+                 <tr>
+                	<td>
+                		<input type="text" name="review_content" id="reviewContent" placeholder="후기를 작성해주세요."
+                			 style="width: 600px; height:100px">
+                	</td>
+                </tr>
+                
+                <tr>
+                    <th><br>수강하셨던 강의의 점수를 입력해주세요.</th>
+                </tr>
+                
+                <tr>
+                	<td>1 2 3 4 5</td>
+                </tr>
+                
+                <tr>
+                	<td>
+                		<input type="radio" name="lecture_review_score" value="1">
+                		<input type="radio" name="lecture_review_score" value="2">
+                		<input type="radio" name="lecture_review_score" value="3">
+                		<input type="radio" name="lecture_review_score" value="4">
+                		<input type="radio" name="lecture_review_score" value="5">
+                	</td>
+                </tr>
+                
+                <tr class="lector_review" style="display: none;">
+                    <th><br>강사님의 점수를 입력해주세요.</th>
+                </tr>
+                
+                <tr class="lector_review" style="display: none;">
+                	<td>1 2 3 4 5</td>
+                </tr>
+                
+                <tr class="lector_review" style="display: none;">
+                	<td>
+                		<input type="radio" name="lector_review_score" value="1">
+                		<input type="radio" name="lector_review_score" value="2">
+                		<input type="radio" name="lector_review_score" value="3">
+                		<input type="radio" name="lector_review_score" value="4">
+                		<input type="radio" name="lector_review_score" value="5">
+                	</td>
+                </tr>
+                
+                
+                <tr>
+                	<td id="lecture_num" th:text="${item.lecture_num}" style="display: none;"></td>
+                	<td id="lector_num" th:text="${item.lector_num}" style="display: none;"></td>
+                	<td id="lector_reviewWriteCheckSign" th:text="${lector_reviewWriteCheckSign}" ></td>
+                </tr>
+                
+                <tr>
+                	<td>
+                		<input type="hidden" th:value="${item.lecture_num}" name="lecture_num">
+                		<input type="hidden" th:value="${item.lector_num}" name="lector_num">
+                		<button class="larger-button">입력</button>
+                	</td>
+                </tr>
+                
+			</tbody>
+		</table>
+	</form>
+	
+<script>
+
+	function reviewCheck() {
+		var lector_reviewWriteCheckSign = document.getElementById("lector_reviewWriteCheckSign").textContent;
+		var lector_reviewElements = document.getElementsByClassName("lector_review");
+		
+		if(lector_reviewWriteCheckSign === 'X') {
+			for (var i = 0; i < lector_reviewElements.length; i++) {
+				lector_reviewElements[i].style.display = "";
+		     }
+		}
+		
+	}
+
+	function validateForm() {
+		var reviewContent = document.getElementById("reviewContent");
+		var lector_reviewWriteCheckSign = document.getElementById("lector_reviewWriteCheckSign").textContent;
+		
+		const lecture_review_scores = document.querySelectorAll('input[name="lecture_review_score"]');
+		var isAnySelected = false;
+		
+		lecture_review_scores.forEach(function(lecture_review_score) {
+			if(lecture_review_score.checked) {
+				isAnySelected = true;
+			}
+		});
+		
+		const lector_review_scores = document.querySelectorAll('input[name="lector_review_score"]');
+		var isAnySelected2 = false;
+		
+		lector_review_scores.forEach(function(lector_review_score) {
+			if(lector_review_score.checked) {
+				isAnySelected2 = true;
+			}
+		});
+		
+		if(!reviewContent.value) {
+			alert("리뷰 내용을 작성해주십시오.");
+			return false;
+		}
+		
+		if(!isAnySelected) {
+			alert("수강하셨던 강의의 점수를 입력해주세요.");
+			return false;
+		}
+		
+		if(lector_reviewWriteCheckSign === 'X') {
+			if(!isAnySelected2) {
+				alert("강사님의 점수를 입력해주세요.");
+				return false;
+			}
+		}
+		
+		
+		alert("정상적으로 리뷰를 작성했습니다.");
+		return true;
+	}
+
+
+
+
+</script>
+	
+</body>
+</html>

@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html xmlns="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>선호 수강 인원 수정</title>
+
+<style>
+	.larger-button {
+		width: 200px;
+		height: 50px;
+		background-color: silver;
+		align: center;
+	}
+	
+	table {
+        margin: 0 auto;
+        border-collapse: separate;
+        border-spacing: 30px; /* 원하는 간격 값으로 조정 */
+    }
+</style>
+
+</head>
+<body>
+	<h2 align="center">선호 수강 인원</h2>
+
+	<form id="prefer_personnelForm" action="updatePrefer_personnelProc" method="post" align="center">
+		<table style="margin: 0 auto;">
+			<tr>
+				<td>
+					<select name="prefer_personnel_value" id="prefer_personnel_value">
+					    <option value="" selected disabled hidden>선택해주세요</option>
+					    <option value="1"> 개인 교습
+					    <option value="1~5">1~5명
+					    <option value="5~10">5~10명
+					    <option value="10~20">10~20명
+					</select>
+				</td>
+			</tr>
+
+			<tr>
+				<td>
+					<button type="submit" class="larger-button">수정</button>
+				</td>
+			</tr>
+		</table>
+	</form>
+
+<script>
+	document.getElementById("prefer_personnelForm").addEventListener("submit", function(event) {
+		event.preventDefault(); // 기본 제출 동작 막기
+		var form = event.target;
+		var formData = new FormData(form);
+		
+		fetch(form.action, {
+			method: form.method,
+			body: formData
+		})
+		.then(function(response) {
+			if (response.ok) {
+				closePopup(); // 데이터 전송 후 팝업 창 닫기
+			}
+		});
+	});
+
+	function closePopup() {
+		window.close(); // 팝업 창 닫기
+		window.opener.location.reload(); // 부모 창 새로 고침
+	}
+</script>
+</body>
+</html>

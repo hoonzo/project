@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html xmlns="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>토큰 교환</title>
+</head>
+<body>
+	
+	
+	
+	
+	<form action="exchangeTokenProc" methd="post">
+		<table>
+			<tr>
+				<td>
+					환전 가능한 토큰 갯수 : 
+				</td>
+				
+				<td>
+					<div id="endPage" th:text="${token}" style=""></div>
+				</td>
+			</tr>
+			
+			<tr>
+				<td>
+					<input type="number" min="0" max="20" th:place="${token}">
+				</td>
+			</tr>
+		
+		
+		</table>
+	
+	
+	</form>
+	
+	
+</body>
+</html>

@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html xmlns="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>멤버쉽 갱신</title>
+
+<style>
+	.larger-button {
+		width: 200px;
+		height: 50px;
+		background-color: silver;
+		align: center;
+	}
+	
+	table {
+        margin: 0 auto;
+        border-collapse: separate;
+        border-spacing: 30px; /* 원하는 간격 값으로 조정 */
+    }
+    
+    .crossed-out {
+        text-decoration: line-through;
+    }
+</style>
+
+</head>
+<body>
+	<h2 align="center">멤버쉽 혜택!</h2>
+	
+	<form id="renewalMembershipForm" action="renewalMembershipProc" method="post" align="center">
+		<table style="margin: 0 auto;">
+		
+			<tr>
+				<td>
+					<h2>혜택 1! 광고 상위 노출</h2>
+					<h2>혜택 2! 토큰 환전 시, 수수료 감면!</h2>
+					
+			    	<input type="radio" name="membership_Type" value="1month">
+			    					1개월 <span class="crossed-out">12,900\</span> ➯  9,900\<br/><br/>
+					<input type="radio" name="membership_Type" value="3month">
+									3개월 <span class="crossed-out">38,700\</span> ➯  27,900\<br/><br/>
+					<input type="radio" name="membership_Type" value="6month">
+									6개월 <span class="crossed-out">77,400\</span> ➯  52,900\<br/><br/>
+					<input type="radio" name="membership_Type" value="12month">
+									12개월 <span class="crossed-out">154,800\</span> ➯  109,900\<br/><br/>
+				</td>
+			</tr>
+			
+			
+			<tr>
+				<td>
+					<h2 id="viewer"></h2>
+				</td>
+			</tr>
+			
+			<tr>
+				<td>
+					<h3>결제 수단</h3>
+					
+					<select name="paymentMethod">
+						<option value="" selected disabled hidden>선택해주세요</option>
+					    <option value="card">카드</option>
+					    <option value="cash">계좌 이체</option>
+					</select>
+				</td>
+			</tr>
+			
+			<tr>
+				<td>
+					<button type="submit" class="larger-button">결제하기</button>
+				</td>
+			</tr>
+		</table>
+		
+		<div id="membershipEndDate" th:text="${membershipEndDate}" style="visibility: hidden;"></div>
+	</form>
+
+<script>
+
+	document.getElementById('renewalMembershipForm').addEventListener('submit', function(event) {
+	    event.preventDefault(); // 기본 제출 동작 막기
+	
+	    var selectedValue = document.querySelector('input[name="membership_Type"]:checked');
+	    var paymentMethod = document.querySelector('select[name="paymentMethod"]');
+	
+	    if (!selectedValue) {
+	        alert('멤버쉽 유형을 선택해주세요.');
+	        return; // 중복 이벤트 리스너 제거를 위해 리턴
+	    }
+	
+	    if (!paymentMethod.value) {
+	        alert('결제 수단을 선택해주세요.');
+	        return; // 중복 이벤트 리스너 제거를 위해 리턴
+	    }
+	
+	    var form = event.target;
+	    var formData = new FormData(form);
+	
+	    fetch(form.action, {
+	        method: form.method,
+	        body: formData
+	    }).then(function(response) {
+	        if (response.ok) {
+	            closePopup(); // 데이터 전송 후 팝업 창 닫기
+	        }
+	    });
+	});
+
+	function closePopup() {
+		window.close(); // 팝업 창 닫기
+		window.opener.location.reload(); // 부모 창 새로 고침
+	}
+	
+	
+	document.addEventListener("DOMContentLoaded", function() {
+		
+	    var membershipEndDate = document.getElementById("membershipEndDate").textContent;
+	    var membershipRadios = document.querySelectorAll('input[name="membership_Type"]');
+	    
+	    membershipRadios.forEach(function(radio) {
+	        radio.addEventListener("change", function() {
+	            var selectedValue = document.querySelector('input[name="membership_Type"]:checked').value;
+	            var endDate = new Date(membershipEndDate); // 날짜 형식으로 변환
+	            
+	            if (selectedValue === '1month') {
+	                endDate.setMonth(endDate.getMonth() + 1);
+	                
+	            } else if (selectedValue === '3month') {
+	                endDate.setMonth(endDate.getMonth() + 3);
+	                
+	            } else if (selectedValue === '6month') {
+	                endDate.setMonth(endDate.getMonth() + 6);
+	                
+	            } else if (selectedValue === '12month') {
+	                endDate.setMonth(endDate.getMonth() + 12);
+	            }
+	            
+	            var year = endDate.getFullYear();
+	            var month = ("0" + (endDate.getMonth() + 1)).slice(-2);
+	            var day = ("0" + endDate.getDate()).slice(-2);
+	            
+	            var formattedDate = year + "년 " + month + "월 " + day + "일";
+	     
+	            document.getElementById("viewer").textContent = '바로 결제 시 ' + formattedDate + '까지 연장!';
+	        });
+	    });
+	});
+	
+</script>
+</body>
+</html>

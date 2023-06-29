@@ -33,24 +33,63 @@
 	    <button>마이페이지</button>
 	</form>
 	
+
 	<br>
-	<form action="recharge" method="post" align="center">
+	<form action="recharge" method="get" align="center">
 		<button>토큰 충전하기</button>
 	</form>
 	
-	<h2 align="center">강사로 등록하고 클래스를 등록해보세요!</h2>
+	
+	<br><br>
+	<hr>
+	<h2 align="center">어떤 강의가 있는지 확인해보세요!</h2>
+	<hr>
+	<br>
+	<form action="lectureListView" method="get" align="center">
+		<button>보러가기</button>
+	</form>
+	<br>
 	<hr>
 	
-	<form action="upgradeLector" method="get" align="center">
-	    <button>강사 등록하기</button>
-	</form>
+	
+	<div id="userField" style="display: none;" align="center">
+		 <div id="userElement" th:text="${role}" style="display: none;"></div>		  
+		 
+		 <h2 align="center">강사로 등록하고 클래스를 등록해보세요!</h2>
+		 <hr>
+		 
+		 <form action="upgradeLector" method="get" align="center">
+		    <button>강사 등록하기</button>
+		</form>
+	</div>
+	
+	<div id="checkLectorRegister" th:text="${checkLectorRegister}" style="display: none;"></div>
+	
+	<div id="beforeLectorField" style="display: none;" align="center">
+		 <h2 align="center">강사 등록 확인 중, 현재 관리자의 승인을 기다리는 중입니다.</h2>
+		 <hr>
+	</div>	
+	
+	<div id="lectorField" style="display: none;" align="center">
+		 <div id="lectorElement" th:text="${role}" style="display: none;"></div>
+		 
+		 <h2 align="center">클래스를 등록하고 강의를 시작하세요!</h2>
+		 <hr>
+		 
+		 <form action="lectorPage" method="get" align="center">
+		    <button>강사 전용 페이지</button>
+		</form>
+	</div>	
+	
 	
 	<br><br><br>
 	<form action="logout" method="get" align="center">
 	    <button>로그아웃</button>
 	</form>
-
+	
+		
 <script>
+	//어드민만 보이게
 	var roleElement = document.getElementById("roleElement");
 	
 	if(roleElement.textContent.includes("ADMIN")) {
@@ -59,6 +98,36 @@
 	} else {
 		document.getElementById("roleField").style.display = "none";
 	}
+	
+	//유저만 보이게
+	var userElement = document.getElementById("userElement");
+	var checkLectorRegister = document.getElementById("checkLectorRegister").innerHTML;
+	
+	if(userElement.textContent.includes("USER") && parseInt(checkLectorRegister) === 0) {
+		document.getElementById("userField").style.display = "block";
+		
+	} else {
+		document.getElementById("userField").style.display = "none";
+	}
+	
+	// 강사 등록 후, 관리자 승인 전 출력 메시지
+	if(userElement.textContent.includes("USER") && parseInt(checkLectorRegister) === 1) {
+		document.getElementById("beforeLectorField").style.display = "block";
+	} else {
+		document.getElementById("beforeLectorField").style.display = "none";
+	}
+	
+	//강사만 보이게
+	var lectorElement = document.getElementById("lectorElement");
+	
+	if(lectorElement.textContent.includes("LECTOR")) {
+		document.getElementById("lectorField").style.display = "block";
+		
+	} else {
+		document.getElementById("lectorField").style.display = "none";
+	}
+	
+	
 
 </script>
 	

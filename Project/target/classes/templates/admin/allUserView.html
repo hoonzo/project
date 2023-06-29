@@ -3,70 +3,126 @@
 <head>
 
 <style>
-    #roleCheck {
-        width: 200px; /* 원하는 크기로 조정 */
-        height: 30px; /* 원하는 크기로 조정 */
-        font-size: 16px; /* 원하는 글꼴 크기로 조정 */
+	#roleCheck {
+		width: 200px;
+		height: 30px;
+		font-size: 16px;
+	}
+	
+	#search {
+		width: 200px;
+		height: 30px;
+		font-size: 16px;
+	}
+	
+	#size {
+		width: 100px;
+		height: 30px;
+		font-size: 16px;
+	}
+	
+	.color {
+		color: red;
+		font-weight: bold;
+		pointer-events: none;
+		font-size: 20px;
+	}
+	
+    .page-gap {
+        margin-right: 10px; /* 간격을 늘리기 위한 추가 간격 설정 */
     }
+    
+    .larger-button {
+        width: 200px;
+        height: 50px;
+        background-color: silver;
+    }
+
+
 </style>
 
 <meta charset="UTF-8">
 <title>어드민 전체 회원 조회</title>
 </head>
 <body>
+
+	<h2 align="center">전체 회원 리스트</h2>
+	<br>
+
+	<form action="userSearch" method="get">
 	
-	<h2 align="center">전체 회원 리스트</h2><br>
-	
-	<select id="roleCheck" onchange="CheckUsers()">
-		<option value="">전체</option>
-		<option value="ROLE_USER">유저</option>
-		<option value="ROLE_LECTOR">강사</option>
-	</select>
-	<br><br>
-	
+		<select id="roleCheck" name="roleCheck">
+			<option value="">전체</option>
+			<option value="ROLE_USER">유저</option>
+			<option value="ROLE_LECTOR">강사</option>
+		</select>
+		<br>
+		<br>
+		
+		<select id="size" name="searchOption">
+			<option value="id">회원 번호</option>
+			<option value="username">아이디</option>
+			<option value="name">이름</option>
+		</select> 
+		
+		<input type="text" name="keyword" id="search" placeholder="검색어 입력">
+		<input type="submit" value="검색">
+	</form>
+
+
+	<br>
+	<br>
+
 	<table style="width: 100%; border-collapse: separate; border-spacing: 0 10px;">
-	
-	  <thead align="center">
-	    <tr>
-	      <th>ID</th>
-	      <th>Username</th>
-	      <th>Name</th>
-	      <th>Email</th>
-	    </tr>
-	  </thead>
-	  
-	  <tbody align="center">
-	    <tr th:each="user : ${allUserlist}">
-	   	  <td th:text="${user.id}"></td>
-	      <td><a th:href="@{'userDetail' + '?username=' + ${user.username}}" th:text="${user.username}"></a></td>
-	      <td th:text="${user.name}"></td>
-	      <td th:text="${user.email}"></td>
-	      <td style="display: none;" th:text="${user.role}"></td>
-	    </tr>
-	  </tbody>
-	  
+
+		<thead align="center">
+			<tr>
+				<th>ID</th>
+				<th>Username</th>
+				<th>Name</th>
+				<th>Email</th>
+			</tr>
+		</thead>
+
+		<tbody align="center">
+			<tr th:each="user : ${pageList.content}">
+				<td th:text="${user.id}"></td>
+				<td>
+					<a th:href="@{'userDetail' + '?username=' + ${user.username}}"
+						th:text="${user.username}">
+					</a>
+				</td>
+				<td th:text="${user.name}"></td>
+				<td th:text="${user.email}"></td>
+				<td style="display: none;" th:text="${user.role}"></td>
+			    
+			</tr>
+		</tbody>
+
 	</table>
 
+
+	<br><br>
+    <div id="divElement" align="center">
+	    <span th:each="pageNum : ${#numbers.sequence(startPage, endPage)}">
+	        <a th:href="@{/allUserView(page = ${pageNum - 1})}" 
+	        	th:text="${pageNum}"
+	        	th:class="${pageNum == nowPage ? 'color' : ''}">>
+	        </a>
+	        <span class="page-gap"></span> <!-- 간격을 추가 -->
+	    </span>
+	</div>
+	
+	<br><br>
+	<form action="adminMain" method="get" align="center">
+		<button class="larger-button">돌아가기</button>
+	</form>
+
+
 <script>
-	function CheckUsers() {
-	  var roleCheck = document.getElementById("roleCheck");
-	  var users = document.querySelectorAll("tbody tr");
 	
-	  for (var i = 0; i < users.length; i++) {
-	    var user = users[i];
-	    var userRole = user.querySelector("td:nth-child(5)").textContent;
-	
-	    if (roleCheck.value === "" || userRole === roleCheck.value) {
-	      user.style.display = "";
-	      
-	    } else {
-	      user.style.display = "none";
-	    }
-	  }
-	}
-	
-</script>	
-	
-	
+</script>
+
+
 </body>
 </html>

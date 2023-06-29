@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+
+<style>
+    #roleCheck {
+        width: 200px;
+        height: 30px;
+        font-size: 16px;
+    }
+    
+    .larger-button {
+        width: 200px;
+        height: 50px;
+        background-color: silver;
+    }
+    
+	#roleCheck {
+		width: 200px;
+		height: 30px;
+		font-size: 16px;
+	}
+	
+	#search {
+		width: 200px;
+		height: 30px;
+		font-size: 16px;
+	}
+	
+	#size {
+		width: 100px;
+		height: 30px;
+		font-size: 16px;
+	}
+	
+	.color {
+		color: red;
+		font-weight: bold;
+		pointer-events: none;
+		font-size: 20px;
+	}
+	
+    .page-gap {
+        margin-right: 10px; /* 간격을 늘리기 위한 추가 간격 설정 */
+    }
+    
+    .larger-button {
+        width: 200px;
+        height: 50px;
+        background-color: silver;
+    }
+
+        
+</style>
+
+<meta charset="UTF-8">
+<title>강사 신청 현황 조회</title>
+</head>
+<body>
+	
+	<h2 align="center">강사 신청 현황</h2><br>
+	
+	<table style="width: 100%; border-collapse: separate; border-spacing: 0 10px;">
+	
+	  <thead align="center">
+	    <tr>
+	      <th>강사 번호</th>
+	      <th>유저 번호</th>
+	      <th>강의 테마</th>
+	      <th>멤버쉽 가입 여부</th>
+	    </tr>
+	  </thead>
+	  
+	  <tbody align="center">
+	    <tr th:each="lector : ${notPermissionLectorList}">
+	    
+	      <td><a th:href="@{'lectorDetail' + '?lector_num=' + ${lector.lector_num}}" th:text="${lector.lector_num}"></a></td>
+	      
+	      <td th:text="${lector.user_id}"></td>
+	      <td th:text="${lector.lecture_theme}"></td>
+	      <td th:text="${lector.membership}"></td>
+	      
+	    </tr>
+	  </tbody>
+	  
+	  
+	  
+	</table>
+	
+	<br><br>
+    <div id="divElement" align="center">
+	    <span th:each="pageNum : ${#numbers.sequence(startPage, endPage)}">
+	        <a th:href="@{/lectorsPermission(page = ${pageNum - 1})}" 
+	        	th:text="${pageNum}"
+	        	th:class="${pageNum == nowPage ? 'color' : ''}">>
+	        </a>
+	        <span class="page-gap"></span> <!-- 간격을 추가하는 요소 -->
+	    </span>
+	</div>
+	
+	<br><br>
+	<form action="adminMain" method="get" align="center">
+		<button class="larger-button">돌아가기</button>
+	</form>
+
+<script>
+
+	
+</script>	
+	
+	
+</body>
+</html>

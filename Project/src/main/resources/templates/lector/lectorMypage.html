@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>강사 마이페이지</title>
+
+<style>
+	table {
+		border-collapse: separate;
+		border-spacing: 50px;
+	}
+
+    th {
+        font-weight: bold;
+        font-size: 20px;
+    }
+    
+    td {
+        font-size: 18px;
+    }
+</style>
+
+
+</head>
+<body>
+
+	<h2 align="center">기본 정보</h2>
+	<table align="center" th:each="item:${lectorList}">
+
+		<tr>
+			<th>강의 테마</th>
+			<td th:text="${item.lecture_theme}"></td>
+		</tr>
+
+		<tr>
+			<th>내 소개</th>
+			<td th:text="${item.career}" id="career"></td>
+			<td><button type="button" onclick="updateBy('career')">수정</button></td>
+		</tr>
+
+		<tr id="lecture_room" style="display: none;">
+			<th>강의실 주소</th>
+			<td th:text="${item.lecture_room_address}" id="lecture_room_address"></td>
+			<td><button type="button" onclick="updateBy('lecture_room_address')">수정</button></td>
+		</tr>
+
+		<tr id="lecture_room_registration" style="display: none;">
+			<th>강의실 주소 등록하기</th>
+			<td> 등록된 주소가 없습니다. </td>
+			<td><button type="button" onclick="insertLecture_room_address()">등록</button></td>
+		</tr>
+
+		<tr>
+			<th>선호 수강 인원</th>
+			<td th:text="${item.prefer_personnel} + '명의 그룹!'" id="prefer_personnel"></td>
+			<td><button type="button" onclick="updateBy('prefer_personnel')">수정</button></td>
+		</tr>
+
+		<tr>
+			<th>나의 강의 점수</th>
+			<td th:text="${item.review_score}"></td>
+			<td><button type="button">상세 보기</button></td>
+		</tr>
+
+		<tr id="membership_period" style="display: none;">
+			<th>멤버쉽 잔여 기간</th>
+			<td th:text="${#dates.format(item.membershipEndDate, 'yyyy년 MM월 dd일') + '까지 혜택!'}"></td>
+			<td><button type="button" onclick="updateBy('renewalMembership')">수정</button></td>
+		</tr>
+
+		<tr id="membership_join" style="display: none;">
+			<th>멤버쉽 가입하기</th>
+			<td>멤버쉽을 가입하시면 더 많은 혜택을 경험하실 수 있습니다!</td>
+			<td><button type="button" onclick="updateBy('membership_join')">가입하기!</button></td>
+		</tr>
+
+
+		<tr>
+			<td id="have_lecture_room" th:text="${item.have_lecture_room}"
+				style="display: none;"></td>
+		</tr>
+
+		<tr>
+			<td id="membership" th:text="${item.membership}"
+				style="display: none;"></td>
+		</tr>
+		
+		<tr>
+			<td id="membershipEndDate" th:text="${#dates.format(item.membershipEndDate, 'yyyy-MM-dd')}"
+				style="display: none;"></td>
+		</tr>
+		
+	</table>
+
+
+
+<script>
+	window.onload = function() {
+		var have_lecture_room = document.getElementById("have_lecture_room").textContent;
+		var lecture_room = document.getElementById("lecture_room");
+		var lecture_room_registration = document
+				.getElementById("lecture_room_registration");
+
+		if (have_lecture_room === "O") {
+			lecture_room.style.display = "";
+			
+		} else {
+			lecture_room_registration.style.display = "";
+		}
+
+		var membership = document.getElementById("membership").textContent;
+		var membership_period = document
+				.getElementById("membership_period");
+		var membership_join = document.getElementById("membership_join");
+
+		if (membership === "O") {
+			membership_period.style.display = "";
+		} else {
+			membership_join.style.display = "";
+		}
+	}
+	
+	function insertLecture_room_address() {
+		var width = 640;
+	    var height = 280;
+    	
+    	var popupOptions = 'width=' + width + ', height=' + height + ', resizable=yes, scrollbars=yes';
+    	var url = 'insertLecture_room_address';
+    	 
+	    window.open(url, '_blank', popupOptions);
+	}
+	
+	function updateBy(action) {
+	    var width = 640;
+	    var height = 600;
+	    
+	    if(action === 'career') {
+	    	var careerValue = document.getElementById('career').textContent;
+	    	var encodedCareerValue = encodeURIComponent(careerValue);
+	    	
+	    	var popupOptions = 'width=' + width + ', height=' + height + ', resizable=yes, scrollbars=yes';
+	    	var url = 'updateCareer?career=' + encodedCareerValue;
+	    	 
+		    window.open(url, '_blank', popupOptions);
+	    
+	    } else if(action === 'lecture_room_address') { 
+	    	var lecture_room_address_value = document.getElementById('lecture_room_address').textContent;
+	    	var encodedLecture_room_address_value = encodeURIComponent(lecture_room_address_value);
+	    	
+	    	var popupOptions = 'width=' + width + ', height=' + height + ', resizable=yes, scrollbars=yes';
+	    	var url = 'updateLecture_room_address?lecture_room_address=' + encodedLecture_room_address_value;
+	    	 
+		    window.open(url, '_blank', popupOptions);
+	    	
+	    } else if(action === 'prefer_personnel') {
+	    	var popupOptions = 'width=' + width + ', height=' + height + ', resizable=yes, scrollbars=yes';
+	    	var url = 'updatePrefer_personnel';
+	    	 
+		    window.open(url, '_blank', popupOptions);
+		    
+	    } else if(action === 'membership_join') {
+	    	var popupOptions = 'width=' + width + ', height=' + height + ', resizable=yes, scrollbars=yes';
+	    	var url = 'membership_join';
+	    	 
+		    window.open(url, '_blank', popupOptions);
+		    
+	    } else if(action === 'renewalMembership') {
+	    	var membershipEndDate = document.getElementById('membershipEndDate').textContent;
+	    	var encodedMembershipEndDate = encodeURIComponent(membershipEndDate);
+	    	
+	    	var popupOptions = 'width=' + width + ', height=' + height + ', resizable=yes, scrollbars=yes';
+	    	var url = 'renewalMembership?membershipEndDate=' + encodedMembershipEndDate;
+	    	
+	    	window.open(url, '_blank', popupOptions);
+	    } 
+	}
+	
+	
+	
+	
+</script>
+
+
+</body>
+</html>

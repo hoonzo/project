@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<style>
+	#searchOption {
+		width: 100px;
+		height: 30px;
+		font-size: 16px;
+	}
+	
+	#search {
+		width: 200px;
+		height: 30px;
+		font-size: 16px;
+	}
+	
+	#address {
+		width: 500px;
+		height: 30px;
+		font-size: 16px;
+	}
+	
+	#size {
+		width: 100px;
+		height: 30px;
+		font-size: 16px;
+	}
+	
+	.color {
+		color: red;
+		font-weight: bold;
+		pointer-events: none;
+		font-size: 20px;
+	}
+	
+	.page-gap {
+		margin-right: 10px; /* 간격을 늘리기 위한 추가 간격 설정 */
+	}
+	
+	.larger-button {
+		width: 200px;
+		height: 50px;
+		background-color: silver;
+	}
+	
+	.radio-buttons {
+		display: flex;
+		justify-content: space-between;
+		margin-bottom: 10px;
+		margin-left: 100px;
+		margin-right: 100px;
+	}
+	
+</style>
+
+<meta charset="UTF-8">
+<title>다른 장소 등록</title>
+</head>
+<body>
+
+	<h2 align="center">다른 장소 사용</h2>
+	<br>
+	<div class="radio-buttons">
+	  <label for="addressOption">
+	    연습실 주소 등록
+	    <input type="radio" name="option" id="addressOption" onchange="toggleForm()">
+	  </label>
+	  
+	  <label for="rentalOption">
+	    연습실 대여
+	    <input type="radio" name="option" id="rentalOption" onchange="toggleForm()"
+	    			th:checked="${searchKeyword != null}">
+	  </label>
+	</div>
+	<br><br>	
+	
+	<form id="addressForm" style="display: none;">
+		
+		<table align="center">
+			<tr>
+				<td align="center">
+					<label for="address" style="margin-right: 30px;">연습실 주소 입력</label> <br><br>
+					<input type="text" id="address" placeholder="주소 입력">
+				</td>
+			</tr>
+			
+			<tr align="center">
+				<td>
+					<br>
+					<button type="button" class="larger-button" onclick="newLecturePlace()">수정</button>
+				</td>
+			</tr>
+		
+		</table>`
+	</form>
+	
+	
+	
+	<form action="searchPracticeRoom" method="get" id="rentalForm" style="display: none;" align="center">
+	
+		<table align="center" style="width: 100%; border-collapse: separate; border-spacing: 0 10px;">
+			
+			<thead align="center">
+				<tr>
+					<th>연습실 주소</th>
+					<th>최대 수용 인원</th>
+					<th>대여 비용</th>
+				</tr>
+			</thead>
+			
+	
+			<tbody align="center">
+				<tr th:each="item, itemStatus : ${practiceRoomPageList.content}">
+			
+					<td>
+						<a th:href="@{'setPracticeRoom_address' + '?practiceRoom_address=' + ${item.practiceRoom_address}
+																+ '&practiceRoom_id=' + ${item.practiceRoom_id}}"
+							th:text="${item.practiceRoom_address}">
+						</a>
+					</td>
+				
+					<td th:text="${item.practiceRoom_maxPersonnel + '명'}"></td>
+				
+					<td th:text="${item.practiceRoom_price + ' TOKEN'}"></td>
+					
+					<td th:text="${item.practiceRoom_id}" style="display: none;"></td>
+				</tr>
+
+			</tbody>
+		</table>
+		
+		<br><br>
+		<input type="text" name="keyword" id="search" placeholder="주소 입력">
+		<input type="submit" value="검색">
+		
+		<br>
+		<br>
+		<div id="divElement" align="center">
+			<span th:each="pageNum : ${#numbers.sequence(startPage, endPage)}">
+				<a th:href="@{/searchPracticeRoom(page = ${pageNum - 1})} +
+             				'&amp;keyword=' + (${searchKeyword} ? ${searchKeyword} : '')"
+							
+					th:text="${pageNum}" th:class="${pageNum == nowPage ? 'color' : ''}">>
+			</a> <span class="page-gap"></span> <!-- 간격을 추가하는 요소 -->
+			</span>
+		</div>
+	</form>
+
+
+<script>
+	function toggleForm() {
+		var addressForm = document.getElementById("addressForm");
+		var rentalForm = document.getElementById("rentalForm");
+
+		var addressOption = document.getElementById("addressOption");
+		var rentalOption = document.getElementById("rentalOption");
+
+		if (addressOption.checked) {
+			addressForm.style.display = "block";
+			rentalForm.style.display = "none";
+
+		} else if (rentalOption.checked) {
+			addressForm.style.display = "none";
+			rentalForm.style.display = "block";
+		}
+	}
+
+	function newLecturePlace() {
+		var address = document.getElementById("address").value;
+		
+		window.opener.updateLecturePlace(address);
+		window.close();
+	}
+	
+
+	
+	window.onload = toggleForm;
+</script>
+
+</body>
+</html>

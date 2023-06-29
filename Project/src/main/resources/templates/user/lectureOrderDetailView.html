@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>수강 내역 상세보기</title>
+
+<style>
+    .larger-button {
+        width: 200px;
+        height: 50px;
+        background-color: silver;
+    }
+    
+    #cancelMassege {
+	  display: block;
+	  font-size: 30px;
+	  color: lightcoral;
+	}
+	
+	
+</style>
+
+</head>
+<body onload="checkBeforeLoad()">
+	
+	<br><h1 align="center">수강 내역 상세보기</h1><hr><br>
+	
+	<form action="" method="post">
+		
+		<div style="display: none;" align="center" id="cancelMassege">취소된 강의입니다.</div>
+		<br><br>
+	
+		<table style="width: 100%; border-collapse: separate; border-spacing: 0 10px;">
+		
+			<tbody align="center" th:each="lecture : ${lectureDetailList}">
+	
+				<tr>
+					<th>강사 번호</th>
+				</tr>
+	
+				<tr>
+					<td><span th:text="${lecture.lector_num}" id="lector_num"></span></td>
+				</tr>
+	
+				<tr></tr><tr></tr>
+	
+				<tr>
+					<th>강의 테마</th>
+				</tr>
+	
+				<tr>
+					<td><span th:text="${lecture.lecture_theme}" id="lectureTheme"></span></td>
+				</tr>
+	
+				<tr></tr><tr></tr>
+	
+				<tr>
+					<th>강의 소개</th>
+				</tr>
+	
+				<tr>
+					<td><span th:text="${lecture.lecture_introduce}"></span></td>
+				</tr>
+	
+				<tr></tr><tr></tr>
+	
+				<tr>
+					<th>강의 장소</th>
+				</tr>
+	
+				<tr>
+					<td><span th:text="${lecture.lecture_place}"></span></td>
+				</tr>
+	
+				<tr></tr><tr></tr>
+	
+				<tr>
+					<th>강의 시간</th>
+				</tr>
+	
+				<tr>
+					<td><span th:text="${#temporals.format(lecture.lecture_date, 'yyyy년 MM월 dd일')}"
+									id="lectureDate"></span> 
+						<span th:text="${#temporals.format(lecture.lecture_start_time, 'HH시 mm분')}"
+									id="lectureStartTime"></span> 
+						<span>~</span> 
+						<span th:text="${#temporals.format(lecture.lecture_end_time, 'HH시 mm분')}"
+									id="lectureEndTime"></span>
+					</td>
+				</tr>
+	
+				<tr></tr><tr></tr>
+	
+				<tr>
+					<th>결제 금액</th>
+				</tr>
+	
+				<tr>
+					<td>
+						<span th:text="'토큰 ' + ${#numbers.formatInteger(lecture.price, 1)} + '개'"
+								id="lecturePrice">
+						</span>
+					</td>
+				</tr>
+	
+				<tr></tr><tr></tr>
+				
+				<tr class="reviewWrite" style="display: none; font-size: 20px;">
+					<th>강의는 어떠셨나요? 후기를 남겨보세요!</th>
+				</tr>
+				
+				<tr class="reviewWrite" style="display: none;">
+					<td>
+						<button type="button" class="larger-button" onclick="writeReview()">후기 작성</button>
+					</td>
+				</tr>
+				
+				<tr></tr><tr></tr>
+				
+				<tr class="lectureCancel" style="display: none;">
+					<th>강의는 시작일 이틀 이전까지만 취소 가능합니다.</th>
+				</tr>
+				
+				<tr class="lectureCancel" style="display: none;">
+					<td>
+						<button type="button" onclick="checkBeforeCancel()" class="larger-button">취소</button>
+					</td>
+				</tr>
+				
+				<tr>
+					<td>
+						<div style="display: none;" th:text="${cancel_check}" id="cancel_check"></div>
+					
+						<div style="display: none;" th:text="${lecture.lecture_num}" id="lecture_num"></div>
+						<div style="display: none;" th:text="${lecture.price}" id="lecture_price"></div>
+						<div style="display: none;" th:text="${lecture.lecture_title}" id="lecture_title"></div>
+						<div style="display: none;" th:text="${lecture.lecture_date}" id="lecture_date"></div>
+						<div style="display: none;" th:text="${lecture.lecture_end_time}" id="lecture_end_time"></div>
+						
+						<div style="display: none;" th:text="${lector_reviewWriteCheckSign}" id="lector_reviewWriteCheckSign"></div>
+						<div style="display: none;" th:text="${lecture_reviewWriteCheckSign}" id="lecture_reviewWriteCheckSign"></div>
+						
+					</td>
+				</tr>
+				
+			</tbody>
+			
+			<tbody id="writeReviewUserMassege" th:each="review : ${myReviewList}"  align="center" style="display: none;">
+				
+				<tr>
+					<th>나의 리뷰!</th>
+				</tr>
+				
+				<tr>
+					<td th:text="${review.review_content}"></td>
+				</tr>	
+				
+				<tr></tr><tr></tr>
+				
+				<tr>
+					<th>나의 강의 점수!</th>
+				</tr>
+				
+				<tr>
+					<td th:text="${review.lecture_review_score}"></td>
+				</tr>	
+				
+				<tr></tr><tr></tr>
+				
+				<tr>
+					<th>나의 강사 점수!</th>
+				</tr>
+				
+				<tr>
+					<td th:text="${review.lector_review_score}"></td>
+				</tr>	
+				
+			</tbody>
+			
+		</table>
+	</form>
+	
+	
+<script>
+	
+	function checkBeforeLoad() {
+		
+		var cancelMassege = document.getElementById("cancelMassege");
+		
+	    var reviewWriteElements = document.getElementsByClassName("reviewWrite");
+        var lectureCancelElements = document.getElementsByClassName("lectureCancel");
+
+		var lecture_date = document.getElementById("lecture_date").textContent;
+		var lecture_end_time = document.getElementById("lecture_end_time").textContent;
+		
+		var cancel_check = document.getElementById("cancel_check").textContent; // 이미 취소한 강의인지 체크
+		
+		// 리뷰 작성 여부 확인
+		var lector_reviewWriteCheckSign = document.getElementById("lector_reviewWriteCheckSign").textContent;
+		var lecture_reviewWriteCheckSign = document.getElementById("lecture_reviewWriteCheckSign").textContent;
+		var writeReviewUserMassege = document.getElementById("writeReviewUserMassege");
+		
+		var nowDate = new Date(); // 현재 시간 호출
+		var lecture_dateObject = new Date(lecture_date);
+		
+		var twoDaysAgo = new Date(lecture_dateObject);
+		twoDaysAgo.setDate(lecture_dateObject.getDate() - 2);
+		
+		var [hours, minutes] = lecture_end_time.split(":"); // 시간과 분을 분리
+		lecture_dateObject.setHours(hours, minutes, 0); // 시간 정보 저장
+		
+		
+		if(cancel_check === 'O') {
+			cancelMassege.style.display = "block"; // 보이기
+			
+			if(lecture_dateObject < nowDate) { // 강의 종료 이후인지 확인
+				 for (var i = 0; i < reviewWriteElements.length; i++) {
+			     	reviewWriteElements[i].style.display = "";
+			     }
+			}
+			
+		} else {
+			
+			if(lecture_dateObject < nowDate && lecture_reviewWriteCheckSign === 'X') { // 강의 종료 이후인지 확인
+				 for (var i = 0; i < reviewWriteElements.length; i++) {
+			     	reviewWriteElements[i].style.display = "";
+			     }
+			
+			} else if(lecture_dateObject >= nowDate && nowDate > twoDaysAgo){
+			     lectureCancelElements[0].style.display = "";
+			     
+			} else if(lecture_dateObject >= nowDate && nowDate < twoDaysAgo){
+				for (var i = 0; i < lectureCancelElements.length; i++) {
+		        	lectureCancelElements[i].style.display = "";
+			    }
+				
+			} else if(lecture_reviewWriteCheckSign === 'O') { // 리뷰 작성했을 경우,
+				writeReviewUserMassege.style.display = "";
+			}
+		}
+	}
+
+	function writeReview() {
+		var lector_num = document.getElementById("lector_num").textContent;
+		var lecture_num = document.getElementById("lecture_num").textContent;
+		var lector_reviewWriteCheckSign = document.getElementById("lector_reviewWriteCheckSign").textContent;
+		
+		window.location.href="writeReview?lector_num=" + lector_num + 
+								"&lecture_num=" + lecture_num + 
+								"&lector_reviewWriteCheckSign=" + lector_reviewWriteCheckSign; 
+	}		
+
+	function checkBeforeCancel() {
+		
+		var lecture_num = document.getElementById("lecture_num").textContent;
+		var lecture_price = document.getElementById("lecture_price").textContent;
+		
+		var lecture_title = document.getElementById("lecture_title").textContent;
+		
+		var result = confirm(lecture_title + ' 해당 강의를 정말 취소하시겠습니까?');
+
+		if (result) {
+			window.location.href = "cancelLecture?lecture_num=" + lecture_num + "&price=" + lecture_price;
+			
+			alert("해당 강의를 취소하였습니다.");
+	
+		} else {
+			window.location.href = "lectureOrderList";
+			
+			alert("이전 화면으로 돌아갑니다.");
+		}
+	}
+
+
+
+	
+		
+		
+		
+		
+		
+		
+
+
+
+
+</script>
+
+
+</body>
+</html>

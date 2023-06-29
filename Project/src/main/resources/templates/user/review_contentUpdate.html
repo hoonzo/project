@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html xmlns="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>작성 리뷰 업데이트</title>
+
+<style>
+.larger-button {
+	width: 200px;
+	height: 50px;
+	background-color: silver;
+	align: center;
+}
+</style>
+
+</head>
+<body>
+	<h2 align="center">리뷰 내용 수정</h2>
+
+	<form align="center">
+				
+		<table>
+			<tr>
+				<td>
+					<input type="text" id="newReview_content"
+							th:placeholder="${review_content}" style="width: 600px; height: 100px">
+				</td>
+			</tr>
+
+			<tr>
+				<td>
+					<button type="button" class="larger-button" onclick="return newReview_contentInput()">수정</button>
+				</td>
+			</tr>
+		</table>
+		
+	</form>
+
+
+
+<script>
+	
+	function newReview_contentInput() {
+		var newReview_content = document.getElementById("newReview_content").value;
+		
+		if(newReview_content == "") {
+			alert("수정할 내용을 작성해주십시오.")
+			return false;
+			
+		} else {
+			window.opener.updateReview_content(newReview_content);
+			window.close();
+		}
+		
+		
+	}
+	
+	
+</script>
+
+
+</body>
+</html>

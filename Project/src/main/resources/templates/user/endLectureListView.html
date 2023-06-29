@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+
+<style>
+    #viewOptionCheck {
+		width: 200px;
+		height: 30px;
+		font-size: 16px;
+	}
+	
+	#lectureThemeCheck {
+		width: 200px;
+		height: 30px;
+		font-size: 16px;
+	}
+	
+	#search {
+		width: 200px;
+		height: 30px;
+		font-size: 16px;
+	}
+	
+	#size {
+		width: 100px;
+		height: 30px;
+		font-size: 16px;
+	}
+	
+	.color {
+		color: red;
+		font-weight: bold;
+		pointer-events: none;
+		font-size: 20px;
+	}
+	
+    .page-gap {
+        margin-right: 10px; /* 간격을 늘리기 위한 추가 간격 설정 */
+    }
+    
+    .larger-button {
+        width: 200px;
+        height: 50px;
+        background-color: silver;
+    }
+   
+
+
+</style>
+
+<meta charset="UTF-8">
+<title>강사의 이전 강의 조회</title>
+</head>
+<body>
+	
+	<h2 align="center" th:text="${'강사 번호 ' + lector_num + ' 의 이전 강의'}"></h2>
+	
+	<table style="width: 100%; border-collapse: separate; border-spacing: 0 10px;">
+
+		<thead align="center">
+			<tr>
+				<th>강의 번호</th>
+				<th>강의 제목</th>
+				<th>강의 날짜</th>
+				<th>리뷰 점수</th>
+			</tr>
+		</thead>
+
+		<tbody align="center">
+			<tr th:each="lecture : ${endLecturePageList.content}">
+				
+				<td th:text="${lecture.lecture_num}"></td>
+				<td>
+					<a th:href="@{'endLectureDetail' + '?lecture_num=' + ${lecture.lecture_num} +
+										'&lector_num=' + ${lector_num}}"
+										
+						th:text="${lecture.lecture_title}">
+					</a>
+				</td>
+				<td><span th:text="${lecture.lecture_date}"></span></td>
+				<td th:text="${lecture.review_score}"></td>
+				
+				<td style="display: none;" th:text="${lector_num}"></td>
+			    
+			</tr>
+		</tbody>
+
+	</table>
+
+	<br><br>
+   <div id="divElement" align="center" th:if="${endLecturePageList.totalElements > 0}">
+	    <span th:each="pageNum : ${#numbers.sequence(startPage, endPage)}">
+	        <a th:href="@{/endLectureViewByLector_num(page=${pageNum - 1}, lector_num=${lecture.lector_num})}" 
+	            th:text="${pageNum}"
+	            th:class="${pageNum == nowPage ? 'color' : ''}">>
+	        </a>
+	        <span class="page-gap"></span> <!-- 간격을 추가하는 요소 -->
+	    </span>
+	</div>
+	
+</body>
+</html>

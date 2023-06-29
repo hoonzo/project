@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html xmlns="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>강의 등록</title>
+
+<style>
+	.larger-button {
+		width: 200px;
+		height: 50px;
+		background-color: silver;
+		align: center;
+	}
+	
+	
+	table {
+        margin: 0 auto;
+        border-collapse: separate;
+        border-spacing: 30px; /* 원하는 간격 값으로 조정 */
+    }
+    
+    th {
+        font-size: 1.2em;
+    }
+    
+    h2 {
+    	font-size: 1.8em;
+    }
+    
+    #rentalDateView {
+	  color: red;
+	  font-size: 18px;
+	}
+   
+</style>
+
+</head>
+<body style="text-align: center;">
+	
+	<br><hr>
+	<h2>강의 등록!</h2>
+	<hr>
+	
+	<form action="courseLectureProc" method="post" onsubmit="return validateForm()">
+		<table align="center">
+			<tbody th:each="item : ${lectorList}">
+
+                <tr>
+                    <th>강의 테마</th>
+                </tr>
+                
+                <tr>
+                	<td th:text="${item.lecture_theme}"></td>
+                </tr>
+                
+                <tr>
+                    <th><br>강의 제목</th>
+                </tr>
+                
+                 <tr>
+                	<td>
+                		<input type="text" name="lecture_title" id="lecture_title"
+                				placeholder="강의 제목을 입력해주세요." style="width: 600px; height:50px">
+                	</td>
+                </tr>
+                
+                <tr>
+                    <th><br>강의 소개</th>
+                </tr>
+                
+                 <tr>
+                	<td>
+                		<input type="text" name="lecture_introduce" id="lecture_introduce"
+                				th:placeholder="${item.career}" style="width: 600px; height:100px">
+                	</td>
+                </tr>
+                
+                <tr>
+                    <th><br>최대 수강 인원</th>
+                </tr>
+                
+                <tr>
+                	<td>
+                		<input type="number" name="maxPersonnel" id="maxPersonnel"
+                				min="0" max="20" step="1"
+								value="0" style="margin: 0 auto;">명
+                	</td>
+                </tr>
+                
+                <tr>
+                    <th><br>강의 장소</th>
+                </tr>
+                
+                <tr class="lecture-room" name="lecture_place" style="display: none;">
+				    <td th:text="${item.lecture_room_address}" id="lecture_room_address"></td>
+				</tr>
+				
+				<tr class="lecture-room" style="display: none;">
+				    <td>
+				    	<button type="button" onclick="otherPlace()">다른 장소 사용</button>
+				    </td>
+				</tr>
+				
+				<tr id="lectureRoomCheck" style="display: none;">
+				    <td><span id="newLecturePlace">강의 장소가 등록되어있지않습니다.</span></td>
+				</tr>
+				
+				<tr id="lecture_room_registration" style="display: none;">
+					<td>
+						<button type="button" onclick="otherPlace()">등록</button>
+					</td>
+				</tr>
+				
+				<tr> <!-- 연습실 예약 일시 출력 장소 -->
+				    <td><span id="rentalDateView"> </span></td>
+				</tr>
+                
+               	<tr>
+                    <th><br>강의 시간</th>
+                </tr>
+                
+                <tr>
+                	<td>
+                		<input type="date" id="lecture_date" name="lecture_date" onchange="dateCheck()">
+                		
+                		<label for="lecture_start_time">시작</label>
+						<input type="time" id="lecture_start_time" name="lecture_start_time" onchange="startTimeCheck()" disabled>
+						
+						<label for="lecture_end_time">종료</label>
+						<input type="time" id="lecture_end_time" name="lecture_end_time" onchange="endTimeCheck()" disabled>
+                	</td>
+                </tr>
+	                
+	            <tr>
+                    <th><br>수강료 산정</th>
+                </tr>  
+                
+                <tr>
+                	<td>
+                		토큰 <input type="number" name="price" id="price" min="0" max="20" step="1"
+								value="0" style="margin: 0 auto;">개
+                	</td>
+                </tr>   
+	            
+		        <tr>
+					<td>
+						<br>
+						<input type="hidden" name="lecture_place" id="hiddenLecturePlace">
+						<input type="hidden" name="lecture_theme" th:value="${item.lecture_theme}">
+						<input type="hidden" name="rentalCheck" id="rentalCheck">
+						
+						<input type="hidden" name="rentalStartTime" id="rentalStartTime">
+						<input type="hidden" name="practiceRoom_id" id="practiceRoom_id">
+						
+						<button type="submit" class="larger-button">등록</button>
+					</td>
+				</tr>
+				
+				
+				<tr>
+					<td id="have_lecture_room" th:text="${item.have_lecture_room}" style="display: none;"></td>
+				</tr>
+				  
+				<tr>
+					<td id="careerValue" th:text="${item.career}" style="display: none;"></td>
+				</tr>
+				
+				<tr>
+					<td id="lecturePlaceValue" th:text="${item.lecture_room_address}" style="display: none;"></td>
+				</tr>
+				
+				
+	        </tbody>
+	
+		</table> 
+		
+	</form>
+	
+	
+	
+
+<script>
+	window.onload = function() {
+		var have_lecture_room = document.getElementById("have_lecture_room").textContent;
+		
+		var lectureRooms = document.getElementsByClassName("lecture-room");
+		var lecture_room_registration = document.getElementById("lecture_room_registration");
+		
+		var lectureRoomCheck = document.getElementById("lectureRoomCheck");
+		
+	 	for (var i = 0; i < lectureRooms.length; i++) {
+	        var lectureRoom = lectureRooms[i];
+	
+			if (have_lecture_room === "O") {
+				lectureRoom.style.display = "";
+				
+			} else {
+				lectureRoomCheck.style.display = ""; 
+				lecture_room_registration.style.display = "";
+			}
+		}
+	}
+	
+	function otherPlace() {
+		var width = 800;
+	    var height = 600;
+
+	    var popupOptions = 'width=' + width + ', height=' + height + ', resizable=yes, scrollbars=yes';
+	    var url = 'otherPlace';
+
+	    window.open(url, '_blank', popupOptions);
+	}
+	
+	function updateLecturePlace(address) {
+		var lectureRoomAddress = document.getElementById("lecture_room_address");
+		var hiddenLecturePlace = document.getElementById("hiddenLecturePlace");
+		var newLecturePlace = document.getElementById("newLecturePlace");
+		
+		hiddenLecturePlace.value = address;
+		lectureRoomAddress.innerText = address;
+		newLecturePlace.innerText = address;
+	}
+	
+	function dateCheck() {
+		var startTimeInput = document.getElementById("lecture_start_time");
+		var endTimeInput = document.getElementById("lecture_end_time");
+		
+		// 입력값
+		var lecture_date = document.getElementById("lecture_date").value;
+		var dateParts = lecture_date.split('-');
+		
+		var selectYear = parseInt(dateParts[0], 10);
+		var selectMonth = parseInt(dateParts[1], 10);
+		var selectDay = parseInt(dateParts[2], 10);
+		
+		// 오늘 날짜 받아오기
+		var today = new Date();
+		var equalsYear = parseInt(today.getFullYear(), 10);
+		var equalsMonth = parseInt(String(today.getMonth() + 1).padStart(2, '0'), 10);
+		var equalsDay = parseInt(String(today.getDate()).padStart(2, '0'), 10);
+		
+		if(selectYear < equalsYear) { // 년도 확인
+			document.getElementById("lecture_date").value = "";
+			
+			startTimeInput.value = "";
+			startTimeInput.disabled = true;
+			
+			endTimeInput.value = "";
+			endTimeInput.disabled = true;
+			
+			alert("적합한 년도를 선택해주십시오.")
+			
+		} else if(selectYear === equalsYear && selectMonth < equalsMonth) { // 달 확인
+			document.getElementById("lecture_date").value = "";
+		
+			startTimeInput.value = "";
+			startTimeInput.disabled = true;
+			
+			endTimeInput.value = "";
+			endTimeInput.disabled = true;
+			
+			alert("적합한 달을 선택해주십시오.")
+			
+		} else if(selectYear === equalsYear && selectMonth === equalsMonth && selectDay < equalsDay) { // 일 확인
+			document.getElementById("lecture_date").value = "";
+		
+			startTimeInput.value = "";
+			startTimeInput.disabled = true;
+			
+			endTimeInput.value = "";
+			endTimeInput.disabled = true;
+			
+			alert("적합한 일자를 선택해주십시오.")
+			
+		} else {
+			startTimeInput.disabled = false;
+		}
+	}
+	
+	function startTimeCheck() {
+		// 입력값
+		var lecture_date = document.getElementById("lecture_date").value;
+		var dateParts = lecture_date.split('-');
+		
+		var selectYear = parseInt(dateParts[0], 10);
+		var selectMonth = parseInt(dateParts[1], 10);
+		var selectDay = parseInt(dateParts[2], 10);
+		
+		// 오늘 날짜 받아오기
+		var today = new Date();
+		var equalsYear = parseInt(today.getFullYear(), 10);
+		var equalsMonth = parseInt(String(today.getMonth() + 1).padStart(2, '0'), 10);
+		var equalsDay = parseInt(String(today.getDate()).padStart(2, '0'), 10);
+		
+		// 종료 시간 입력창 활성화를 위함
+		var lecture_end_time = document.getElementById("lecture_end_time");
+		
+		var lecture_start_time = document.getElementById("lecture_start_time").value;
+		var dateParts = lecture_start_time.split(':');
+		
+		var selectHours = parseInt(dateParts[0], 10);
+		var selectMinutes = parseInt(dateParts[1], 10);
+		
+		var nowTime = new Date();
+		var nowHours = parseInt(nowTime.getHours());
+		var nowMinutes = parseInt(nowTime.getMinutes());
+		
+		//선택일이 오늘일 경우,
+		if(selectYear === equalsYear && selectMonth === selectMonth && selectDay === equalsDay) {
+			
+			if(selectHours < nowHours) {
+				document.getElementById("lecture_start_time").value = "";
+				lecture_end_time.disabled = true;
+				alert("적합한 시간을 선택해주십시오.")
+				
+			} else if(selectHours === nowHours && selectMinutes < nowMinutes) {
+				document.getElementById("lecture_start_time").value = "";
+				lecture_end_time.disabled = true;
+				alert("적합한 시간을 선택해주십시오.")
+		
+			} else {
+				lecture_end_time.disabled = false;
+			}
+			
+		//오늘이 아닐 경우, 
+		} else { 
+			lecture_end_time.disabled = false;
+		}
+	}
+	
+	function endTimeCheck() {
+		var lecture_start_time = document.getElementById("lecture_start_time").value;
+		var startTimeDateParts = lecture_start_time.split(':');
+		
+		var startHours = parseInt(startTimeDateParts[0], 10);
+		var startMinutes = parseInt(startTimeDateParts[1], 10);
+	
+		var lecture_end_time = document.getElementById("lecture_end_time").value;
+		var endTimeDateParts = lecture_end_time.split(':');
+		
+		var endHours = parseInt(endTimeDateParts[0], 10);
+		var endMinutes = parseInt(endTimeDateParts[1], 10);
+		
+		if(startHours > endHours) {
+			document.getElementById("lecture_end_time").value = "";
+			alert("적합한 시간을 선택해주십시오.");
+		
+		} else if(startHours === endHours && endMinutes < startMinutes) {
+			document.getElementById("lecture_end_time").value = "";
+			alert("적합한 시간을 선택해주십시오.");
+		} 
+	}
+	
+	function validateForm(){
+		var lecture_title = document.getElementById("lecture_title");
+		var lecture_introduce = document.getElementById("lecture_introduce");
+		var maxPersonnel = document.getElementById("maxPersonnel").value;
+		var hiddenLecturePlace = document.getElementById("hiddenLecturePlace");
+		var lecture_date = document.getElementById("lecture_date").value;
+		var lecture_start_time = document.getElementById("lecture_start_time").value;
+		var lecture_end_time = document.getElementById("lecture_end_time").value;
+		var price = document.getElementById("price").value;
+			
+		if(!lecture_title) {
+			alert("수업의 제목을 입력해주세요.");
+	        return false;
+		}
+		
+		if(!lecture_introduce.value) { // 설정한 내용이 없으면, 기본값으로 설정한다.
+			var careerValue = document.getElementById("careerValue").innerText;
+			lecture_introduce.value = careerValue;
+		} 
+		
+		if(maxPersonnel == 0) {
+			alert("수업의 최대 수강 인원을 입력해주세요.");
+	        return false;	
+		} 
+		
+		if(!hiddenLecturePlace.value) { // 설정한 내용이 없으면, 기본값으로 설정한다.
+			var lecturePlaceValue = document.getElementById("lecturePlaceValue").innerText;
+			hiddenLecturePlace.value = lecturePlaceValue;
+		}
+		
+		if(!lecture_date) {
+			alert("수업 날짜를 입력해주세요.");
+	        return false;
+		}
+		
+		if(!lecture_start_time) {
+			alert("수업의 시작 시간을 입력해주세요.");
+	        return false;
+		}
+		
+		if(!lecture_end_time) {
+			alert("수업의 종료 시간을 입력해주세요.");
+	        return false;
+		}
+		
+		if(price == 0) {
+			alert("수강료를 입력해주세요.");
+	        return false;
+		}
+		
+		alert("정상적으로 강의가 등록되었습니다.");
+	    return true;
+	}
+	
+	
+	
+	
+</script>	
+	
+</body>
+</html>

@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>연습실 대여 상세보기</title>
+
+<style>
+    .larger-button {
+        width: 200px;
+        height: 50px;
+        background-color: silver;
+    }
+    
+    #cancelMassege {
+	  display: block;
+	  font-size: 30px;
+	  color: lightcoral;
+	}
+	
+	
+</style>
+
+</head>
+<body onload="cancelCheck()">
+	
+	<br><h1 align="center">연습실 대여 상세보기</h1><hr><br>
+		
+	<table style="width: 100%; border-collapse: separate; border-spacing: 0 10px;">
+		
+		<tbody align="center" th:each="detail : ${practiceRoomDetail}">
+		
+			<tr id="cancelMassege" style="display: none;">
+					<td>
+				    	취소된 결제 건입니다.
+				    </td>
+				</tr>
+			<tr>
+			
+				<th>연습실 주소</th>
+			</tr>
+
+			<tr>
+				<td><span th:text="${detail.practiceRoom_address}"></span></td>
+			</tr>
+
+			<tr></tr><tr></tr>
+
+			<tr>
+				<th>결제 금액</th>
+			</tr>
+
+			<tr>
+				<td><span th:text="${'토큰 ' + detail.practiceRoom_price + '개'}"></span></td>
+			</tr>
+			
+			<tr>
+				<td>
+					<div style="display: none;" th:text="${detail.practiceRoom_price}" id="price"></div>
+				</td>
+			</tr>
+		</tbody>
+		
+		
+		<tbody align="center" th:each="rental : ${practiceRoomOrderList}">
+			<tr></tr><tr></tr>
+		
+			<tr>
+				<th>대여 일시</th>
+			</tr>
+
+			<tr>
+				<td><span th:text="${#temporals.format(rental.rentalDate, 'yyyy년 MM월 dd일')}"></span></td>
+			</tr>
+
+			<tr></tr><tr></tr>
+
+			<tr>
+				<th>대여 시간</th>
+			</tr>
+
+			<tr>
+				<td><span th:text="${rental.rentalStartTime} + '시 ~ ' + ${rental.rentalEndTime} + '시'"></span></td>
+			</tr>
+
+			<tr></tr><tr></tr>
+			<tr></tr><tr></tr>
+			
+			<tr>
+				<td>
+					<button type="button" onclick="cancel()" class="larger-button" id="cancelButton">취소</button>
+				</td>
+			</tr>
+			
+			<tr>
+				<td>
+					<div style="display: none;" th:text="${rental.practiceRoomOrder_id}" id="practiceRoomOrder_id"></div>
+					<div style="display: none;" th:text="${rental.cancel_check}" id="cancel_check"></div>
+				</td>
+			</tr>
+			
+			
+		
+		</tbody>
+		
+		
+	</table>
+	
+	
+<script>
+
+	function cancelCheck() {
+		var cancelCheck = document.getElementById("cancel_check").textContent;
+		
+		if(cancelCheck === 'O') {
+			cancelMassege.style.display = "";
+			
+			cancelButton.disabled = true;
+		}
+	}
+
+	function cancel() {
+		
+		var price = document.getElementById("price").textContent;
+		var practiceRoomOrder_id = document.getElementById("practiceRoomOrder_id").textContent;
+		
+		var result = confirm("연습실 취소 이후 강의 시작일 1일 이전까지 새로운 장소를 등록하지않을 시, 강의는 자동으로 삭제 처리됩니다.\n정말 취소하시겠습니까?");
+
+		if (result) {
+			window.location.href = "cancelRentalPracticeRoom?practiceRoomOrder_id=" + practiceRoomOrder_id + 
+									"&practiceRoom_price=" + price;
+			
+			alert("해당 연습실 예약을 취소하였습니다.");
+	
+		} else {
+			window.location.href = "myRentalList";
+			
+			alert("이전 화면으로 돌아갑니다.");
+		}
+	}
+
+
+
+
+</script>
+
+
+</body>
+</html>

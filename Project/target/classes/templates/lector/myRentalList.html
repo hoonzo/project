@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+
+<style>
+    #viewOptionCheck {
+		width: 200px;
+		height: 30px;
+		font-size: 16px;
+	}
+	
+	#lectureThemeCheck {
+		width: 200px;
+		height: 30px;
+		font-size: 16px;
+	}
+	
+	#search {
+		width: 200px;
+		height: 30px;
+		font-size: 16px;
+	}
+	
+	#size {
+		width: 100px;
+		height: 30px;
+		font-size: 16px;
+	}
+	
+	.color {
+		color: red;
+		font-weight: bold;
+		pointer-events: none;
+		font-size: 20px;
+	}
+	
+    .page-gap {
+        margin-right: 10px; /* 간격을 늘리기 위한 추가 간격 설정 */
+    }
+    
+    .larger-button {
+        width: 200px;
+        height: 50px;
+        background-color: silver;
+    }
+   
+
+
+</style>
+
+<meta charset="UTF-8">
+<title>대여 리스트</title>
+</head>
+<body>
+	
+	<h2 align="center">강의실 대여 관리</h2>
+	
+	<table style="width: 100%; border-collapse: separate; border-spacing: 0 10px;">
+
+		<thead align="center">
+			<tr>
+				<th>주문 번호</th>
+				<th>대여 날짜</th>
+				<th>대여 시간</th>
+				<th>결제 일시</th>
+			</tr>
+		</thead>
+
+		<tbody align="center">
+			<tr th:each="rental : ${practiceRoomOrderList.content}">
+				
+				<td th:text="${rental.practiceRoomOrder_id}"></td>
+				<td>
+					<a th:href="@{'rentalPracticeRoomDetail' + '?practiceRoom_id=' + ${rental.practiceRoom_id}
+										+ '&practiceRoomOrder_id=' + ${rental.practiceRoomOrder_id}}"
+						th:text="${#temporals.format(rental.rentalDate, 'yyyy년 MM월 dd일')}">
+					</a>
+				</td>
+				<td th:text="${rental.rentalStartTime} + '시 ~ ' + ${rental.rentalEndTime} + '시'"></td>
+			    <td th:text="${#dates.format(rental.createTime, 'yyyy년 MM월 dd일 HH시 mm분')}">
+			    
+			</tr>
+		</tbody>
+
+	</table>
+
+	<br><br>
+   <div id="divElement" align="center" th:if="${practiceRoomOrderList.totalElements > 0}">
+	    <span th:each="pageNum : ${#numbers.sequence(startPage, endPage)}">
+	        <a th:href="@{/myRentalList(page = ${pageNum - 1})}" 
+	            th:text="${pageNum}"
+	            th:class="${pageNum == nowPage ? 'color' : ''}">>
+	        </a>
+	        <span class="page-gap"></span> <!-- 간격을 추가하는 요소 -->
+	    </span>
+	</div>
+	
+</body>
+</html>

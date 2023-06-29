@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<style>
+    .larger-button {
+        width: 200px;
+        height: 50px;
+        background-color: silver;
+    }
+    
+    th {
+        font-size: 1.3em;
+    }
+    
+    td {
+        font-size: 0.9em;
+    }
+    
+	#checkMessage {
+	  font-size: 24px;
+	  color: lightcoral;
+	  text-align: center;
+	}
+	
+	
+</style>
+
+
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body onload="onloadCheck()">
+	
+	<form action="lectureReservation" method="get">
+		<h2 align="center">종료된 강의</h2><br>
+		
+		<table style="width: 100%; border-collapse: separate; border-spacing: 0 10px;">
+		
+			<tbody align="center" th:each="lecture : ${endLectureList}">
+			
+				<tr>
+					<th>강사 번호</th>
+				</tr>
+				
+				<tr>
+					<td><span th:text="${lecture.lector_num}"></span></td>
+				</tr>
+				
+				<tr></tr>
+				
+				<tr>
+					<td><button type="button" onclick="lectorReview()">강사 리뷰</button></td>
+				</tr>
+				
+				<tr></tr><tr></tr>
+		
+				<tr>
+					<th>강의 테마</th>
+				</tr>
+				
+				<tr>
+					<td><span th:text="${lecture.lecture_theme}" id="lectureTheme"></span></td>
+				</tr>
+				
+				<tr></tr><tr></tr>
+				
+				<tr>
+					<th>강의 소개</th>
+				</tr>
+				
+				<tr>	
+					<td><span th:text="${lecture.lecture_introduce}"></span></td>
+				</tr>
+				
+				<tr></tr><tr></tr>
+				
+				<tr>
+					<th>강의 장소</th>
+				</tr>
+				
+				<tr>
+					<td><span th:text="${lecture.lecture_place}"></span></td>
+				</tr>
+				
+				<tr></tr><tr></tr>
+				
+				<tr>
+					<th>강의 시간</th>
+				</tr>
+				
+				<tr>
+				  <td>
+				    <span th:text="${#temporals.format(lecture.lecture_date, 'yyyy년 MM월 dd일')}" id="lectureDate"></span>
+				    <span th:text="${#temporals.format(lecture.lecture_start_time, 'HH시 mm분')}" id="lectureStartTime"></span>
+				    <span>~</span>
+				    <span th:text="${#temporals.format(lecture.lecture_end_time, 'HH시 mm분')}" id="lectureEndTime"></span>
+				  </td>
+				</tr>
+				
+				<tr></tr><tr></tr>
+		
+				<tr>
+					<th>강사 평점</th>
+				</tr>
+				
+				<tr>
+					<td><span th:text="${review_score} + '점!'"></span></td>
+				</tr>
+				
+				<tr></tr><tr></tr>
+
+				<tr>
+					<td>
+						<div style="display: none;" th:text="${lecture.lector_num}" id="lector_num"></div>
+						<div style="display: none;" th:text="${nullCheckMessage}" id="nullCheckMassege"></div>
+					</td>
+				</tr>
+				
+			</tbody>
+			
+		</table>
+		
+		<hr>
+		<h2 align="center">유저 리뷰</h2><hr>
+		
+		<br>
+		<h3 align="center" id="checkMessage" style="display: none;">아직 등록된 리뷰가 없습니다.</h3>
+		
+		<table id="review" style="width: 100%; border-collapse: separate; border-spacing: 0 10px;">
+			
+			<thead align="center">
+					<tr>
+						<th>유저</th>
+						<th>리뷰</th>
+						<th>강의 평점</th>
+					</tr>
+			</thead>
+			
+			<tbody align="center" th:each="review : ${reviewList}">
+				
+				<tr>
+					<td th:text="${'*****' + review.user_id}"></td>
+					<td th:text="${review.review_content}"></td>
+					<td th:text="${review.lecture_review_score + '점'}"></td>
+				</tr>
+				
+			</tbody>
+			
+		
+		
+		</table>
+	</form>	
+	
+<script>
+
+	function onloadCheck() {
+		var nullCheckMassege = document.getElementById("nullCheckMassege").textContent;
+		var checkMessage = document.getElementById("checkMessage");
+		var review = document.getElementById("review");
+		
+		if(nullCheckMassege === 'O') { // 등록된 리뷰가 없을 경우,
+			checkMessage.style.display = "";
+			review.style.display = "none";
+		}
+	}
+
+	function lectorReview() {
+		var lector_num = document.getElementById("lector_num").textContent;
+		
+		window.location.href = "lectorReview?lector_num=" + lector_num;
+	}
+
+</script>
+	
+	
+</body>
+</html>

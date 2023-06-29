@@ -1,7 +1,9 @@
 package com.ezen.Repository;
 
-import java.util.List;  
+import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -71,6 +73,56 @@ public interface UserRepository extends JpaRepository<Users, Integer> {
     
     @Query("SELECT u FROM Users u ORDER BY id DESC")
     List<Users> findAllUserlist();
+    
+    @Modifying
+    @Query("UPDATE Users u SET u.role = 'ROLE_LECTOR' WHERE u.id = :id")
+    void changeRole(int id);
+    
+    
+    
+    
+    
+    
+    
+// 어드민 검색 기능     
+    
+    // id 기반 검색 기능
+    @Query("SELECT u FROM Users u WHERE u.id LIKE '%' || :keyword || '%'")
+    Page<Users> searchUserById(String keyword, Pageable pageable);
+    
+    @Query("SELECT u FROM Users u WHERE u.id LIKE '%' || :keyword || '%' AND u.role = :role")
+    Page<Users> searchUserByIdAndRole(String keyword, String role, Pageable pageable);
+    
+    
+    // username 기반 검색 기능
+    @Query("SELECT u FROM Users u WHERE u.username LIKE '%' || :keyword || '%'")
+    Page<Users> searchUserByUsername(String keyword, Pageable pageable);
+    
+    @Query("SELECT u FROM Users u WHERE u.username LIKE '%' || :keyword || '%' AND u.role = :role")
+    Page<Users> searchUserByUsernameAndRole(String keyword, String role, Pageable pageable);
+    
+    
+    // name 기반 검색 기능
+    @Query("SELECT u FROM Users u WHERE u.name LIKE '%' || :keyword || '%'")
+    Page<Users> searchUserByName(String keyword, Pageable pageable);
+ 
+    @Query("SELECT u FROM Users u WHERE u.name LIKE '%' || :keyword || '%' AND u.role = :role")
+    Page<Users> searchUserByNameAndRole(String keyword, String role, Pageable pageable);
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     
     
     
