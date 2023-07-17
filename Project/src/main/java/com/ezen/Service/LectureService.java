@@ -379,6 +379,61 @@ public class LectureService {
 		lectureRepository.all_review_scoreUpdateByLecture_num(all_review_score, lecture_num);
 	}
 	
+	public Page<Lecture> findNotEndLectureListByLector_num(Pageable pageable, int lector_num) {
+		
+		LocalTime nowTime = LocalTime.now();
+		
+		Pageable pageRequest = PageRequest.of(pageable.getPageNumber(), 5, Sort.by(Sort.Direction.DESC, "lecture_num"));
+		return lectureRepository.findNotEndLectureListByLector_num(pageRequest, lector_num, nowTime);
+	}
+	
+	public double findPriceByLecture_num(int lecture_num) {
+		return lectureRepository.findPriceByLecture_num(lecture_num);
+	}
+	
+	@Transactional
+	public void updateGetTokenCheckByLecture_num(int lecture_num) {
+		lectureRepository.updateGetTokenCheckByLecture_num(lecture_num);
+	}
+	
+	public Lecture findLectureTypeByLecture_num(int lecture_num) {
+		return lectureRepository.findLectureTypeByLecture_num(lecture_num);
+	}
+	
+	
+	
+	
+	// 어드민
+	
+	public Page<Lecture> findAllLectureList(Pageable pageable) {
+		Pageable pageRequest = PageRequest.of(pageable.getPageNumber(), 5, Sort.by(Sort.Direction.DESC, "lecture_num"));
+		return lectureRepository.findAllLectureList(pageRequest);
+	}
+	
+	public Page<Lecture> findNotEndLectureList(Pageable pageable) {
+		Pageable pageRequest = PageRequest.of(pageable.getPageNumber(), 5, Sort.by(Sort.Direction.DESC, "lecture_num"));
+		LocalTime nowTime = LocalTime.now();
+		
+		return lectureRepository.findNotEndLectureList(pageRequest, nowTime);
+	}
+	
+	public Page<Lecture> findEndLectureList(Pageable pageable) {
+		Pageable pageRequest = PageRequest.of(pageable.getPageNumber(), 5, Sort.by(Sort.Direction.DESC, "lecture_num"));
+		return lectureRepository.findEndLectureList(pageRequest);
+	}
+	
+	public int findComplainCountByLecture_num(int lecture_num) {
+		return lectureRepository.findComplainCountByLecture_num(lecture_num);
+	}
+	
+	@Transactional
+	public void updateComplainCountByLecture_num(int complainCount, int lecture_num) {
+		lectureRepository.updateComplainCountByLecture_num(complainCount, lecture_num);
+	}
+	
+	public int findLector_numByLecture_num(int lecture_num) {
+		return lectureRepository.findLector_numByLecture_num(lecture_num);
+	}
 	
 	
 	

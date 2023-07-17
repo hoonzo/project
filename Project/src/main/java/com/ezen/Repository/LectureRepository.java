@@ -325,6 +325,49 @@ public interface LectureRepository extends JpaRepository<Lecture, Integer>{
 	void all_review_scoreUpdateByLecture_num(double all_review_score, int lecture_num);
 	
 	
+	@Query("SELECT lec FROM Lecture lec "
+			+ "WHERE lec.lector_num = :lector_num "
+			+ "AND (lec.lecture_date > TRUNC(SYSDATE) "
+			+ "OR (lec.lecture_date = TRUNC(SYSDATE) AND lec.lecture_start_time >= :nowTime)) "
+			+ "ORDER BY lec.lecture_date ASC")
+	Page<Lecture> findNotEndLectureListByLector_num(Pageable pageable, int lector_num, LocalTime nowTime);
+	
+	@Query("SELECT lec.price FROM Lecture lec WHERE lec.lecture_num = :lecture_num")
+	double findPriceByLecture_num(int lecture_num);
+	
+	@Modifying
+	@Query("UPDATE Lecture lec SET lec.getTokenCheck = 'O' WHERE lec.lecture_num = :lecture_num")
+	void updateGetTokenCheckByLecture_num(int lecture_num);
+	
+	
+	
+	// 어드민 기능
+	@Query("SELECT lec FROM Lecture lec ORDER BY lec.lecture_date DESC")
+	Page<Lecture> findAllLectureList(Pageable pageable);
+	
+	@Query("SELECT lec FROM Lecture lec "
+			+ "WHERE (lec.lecture_date > TRUNC(SYSDATE) "
+			+ "OR (lec.lecture_date = TRUNC(SYSDATE) AND lec.lecture_start_time >= :nowTime)) "
+			+ "ORDER BY lec.lecture_date ASC")
+	Page<Lecture> findNotEndLectureList(Pageable pageable, LocalTime nowTime);
+	
+	@Query("SELECT lec FROM Lecture lec "
+			+ "WHERE lec.lecture_date < TRUNC(SYSDATE) "
+			+ "ORDER BY lec.lecture_date DESC")
+	Page<Lecture> findEndLectureList(Pageable pageable);
+	
+	@Query("SELECT lec FROM Lecture lec WHERE lec.lecture_num = :lecture_num")
+	Lecture findLectureTypeByLecture_num(int lecture_num);
+	
+	@Query("SELECT lec.complainCount FROM Lecture lec WHERE lec.lecture_num = :lecture_num")
+	int findComplainCountByLecture_num(int lecture_num);
+	
+	@Modifying
+	@Query("UPDATE Lecture lec SET lec.complainCount = :complainCount WHERE lec.lecture_num = :lecture_num")
+	void updateComplainCountByLecture_num(int complainCount, int lecture_num);
+	
+	@Query("SELECT lec.lector_num FROM Lecture lec WHERE lec.lecture_num = :lecture_num")
+	int findLector_numByLecture_num(int lecture_num);
 	
 	
 	

@@ -1,6 +1,8 @@
 package com.ezen.Service;
 
-import java.util.List; 
+import java.util.List;
+
+import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -48,6 +50,17 @@ public class ReviewService {
 	public Review findReviewByReivew_num(int reivew_num) {
 		return reviewRepository.findReviewByReivew_num(reivew_num);
 	}
+	
+	public void reviewDelete(int reivew_num) {
+		reviewRepository.deleteById(reivew_num);
+	}
+	
+	@Transactional
+	public void hide_review(int reivew_num) {
+		reviewRepository.hide_review(reivew_num);
+	}
+	
+	
 	
 	
 

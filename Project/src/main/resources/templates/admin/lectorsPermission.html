@@ -88,11 +88,12 @@
 	</table>
 	
 	<br><br>
-    <div id="divElement" align="center">
+
+	<div id="divElement" align="center" th:if="${notPermissionLectorList.totalElements > 0}">
 	    <span th:each="pageNum : ${#numbers.sequence(startPage, endPage)}">
 	        <a th:href="@{/lectorsPermission(page = ${pageNum - 1})}" 
-	        	th:text="${pageNum}"
-	        	th:class="${pageNum == nowPage ? 'color' : ''}">>
+	            th:text="${pageNum}"
+	            th:class="${pageNum == nowPage ? 'color' : ''}">>
 	        </a>
 	        <span class="page-gap"></span> <!-- 간격을 추가하는 요소 -->
 	    </span>

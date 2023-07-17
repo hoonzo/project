@@ -3,50 +3,153 @@
 <head>
 <meta charset="UTF-8">
 <title>정보 수정 페이지</title>
+
+<style>
+    .table-spacing td {
+        padding-right: 100px;
+        padding-left: 70px;
+    }
+    
+    .larger-button {
+        width: 200px;
+        height: 50px;
+        background-color: silver;
+    }	
+</style>
+
 </head>
-<body>
+<body onload="onloadCheck()">
 
-
+	<br><br>
 	<form action="passwordUpdate" method="post" align="center">
 		<button>보안 설정</button>
 	</form>
 	<br>
+		
+	<h2 align="center">기본 정보</h2><br>
 	
-<h2 align="center">기본 정보</h2>
-<table align="center" th:each="item:${userList}">
-    <tr>
-   		<td>이름</td>
-        <td th:text="${item.name}"></td>
-        <td><button type="button" onclick="updateBy('name')">수정</button></td>
-    </tr>
-    <tr>
-    	<td>이메일</td>
-        <td th:text="${item.email}"></td>
-        <td><button type="button" onclick="updateBy('email')">수정</button></td>
-    </tr>
-    <tr>
-    	<td>연락처</td>
-        <td th:text="${item.phone}"></td>
-        <td><button type="button" onclick="updateBy('phone')">수정</button></td>
-    </tr>
-    <tr>
-    	<td>선호 강의</td>
-        <td th:text="${item.prefer_lecture}"></td>
-        <td><button type="button" onclick="updateBy('prefer_lecture')">수정</button></td>
-    </tr>
-    <tr>
-    	<td>매너 스코어</td>
-        <td th:text="${item.manner_score}"></td>
-        <!-- 추후 리뷰 작성 기능 추가 예정 -->
-    </tr>
-    <tr>
-    	<td>보유 토큰</td>
-        <td th:text="${item.token}"></td>
-    </tr>
-</table>	
+	<h2 align="center" id="deleteMsg"
+			style="display : none; color: lightcoral;">
+		탈퇴 처리가 진행중입니다.
+	</h2><br>
 	
+	<table align="center" th:each="item:${userList}" class="table-spacing">
+	
+	    <tr>
+	   		<th>이름</th>
+	        <td th:text="${item.name}"></td>
+	        <td><button type="button" onclick="updateBy('name')">수정</button></td>
+	    </tr>
+	    
+	    <tr></tr><tr></tr><tr></tr><tr></tr><tr></tr><tr></tr>
+	    
+	    <tr>
+	    	<th>이메일</th>
+	        <td th:text="${item.email}"></td>
+	        <td><button type="button" onclick="updateBy('email')">수정</button></td>
+	    </tr>
+	    
+	    <tr></tr><tr></tr><tr></tr><tr></tr><tr></tr><tr></tr>
+	    
+	    <tr>
+	    	<th>연락처</th>
+	        <td th:text="${item.phone}"></td>
+	        <td><button type="button" onclick="updateBy('phone')">수정</button></td>
+	    </tr>
+	    
+	    <tr></tr><tr></tr><tr></tr><tr></tr><tr></tr><tr></tr>
+	    
+	    <tr>
+	    	<th>선호 강의</th>
+	        <td th:text="${item.prefer_lecture}"></td>
+	        <td><button type="button" onclick="updateBy('prefer_lecture')">수정</button></td>
+	    </tr>
+	    
+	    <tr></tr><tr></tr><tr></tr><tr></tr><tr></tr><tr></tr>
+	    
+	    <tr>
+	    	<th>매너 스코어</th>
+	        <td th:text="${item.manner_score + ' 점'}"></td>
+	        <!-- 추후 리뷰 작성 기능 추가 예정 -->
+	    </tr>
+	    
+	    <tr></tr><tr></tr><tr></tr><tr></tr><tr></tr><tr></tr>
+	    
+	    <tr>
+	    	<th>보유 토큰</th>
+	        <td th:text="${item.token + ' 개'}"></td>
+	    </tr>
+	    
+	    
+	    
+	</table>	
+	
+	<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+	<table align="center">
+	    
+	    <tr id="deleteApplication" style="display : none;">
+	    	<td>
+	    		<button type="button" onclick="deleteUser()">회원 탈퇴</button>
+	    	</td>
+	    </tr>
+	    
+	     <tr id="deleteApplicationCancel" style="display : none;">
+	    	<td>
+	    		<button type="button" class="larger-button" onclick="deleteUserCancel()">회원 탈퇴 취소</button>
+	    	</td>
+	    </tr>
+	    
+	</table>
+	    
+	<div th:text="${deleteApplicationUserMsg}" id="deleteApplicationUserMsg" style="display : none;"></div>    
 	
 <script>
+
+	function onloadCheck() {
+		
+		var deleteApplicationUserMsg = document.getElementById("deleteApplicationUserMsg").textContent;
+		
+		
+		var deleteMsg = document.getElementById("deleteMsg"); 
+		var deleteApplication = document.getElementById("deleteApplication"); 
+		var	deleteApplicationCancel	= document.getElementById("deleteApplicationCancel");
+		
+			if(deleteApplicationUserMsg == "O") {
+				deleteApplicationCancel.style.display = "";
+				deleteMsg.style.display = "";
+				
+			} else {
+				deleteApplication.style.display = "";
+			}
+		
+	}
+	
+	function deleteUser() {
+		
+		var result = confirm("정말 탈퇴 하시겠습니까?");
+
+			if (result) {
+				window.location.href = 'deleteUser';
+			
+			} else {
+				window.close();
+			}
+		
+	}
+	
+	
+	function deleteUserCancel() {
+		var result = confirm("탈퇴 신청을 취소하시겠습니까?");
+
+			if (result) {
+				window.location.href = 'deleteUserCancel';
+			
+			} else {
+				window.close();
+			}
+	}
+	
+
 	function updateBy(value) {
 	    window.location.href = '/updateBy?paramName=' + encodeURIComponent(value);
 	}

@@ -49,8 +49,13 @@ public class Lecture {
 	private double review_score;
 	private String reviewWriteCheck;
 	
+	private String getTokenCheck = "X";
+	
 	@Column(columnDefinition = "number(10,0) default 0")
 	private double all_review_score = 0;
+	
+	@Column(columnDefinition = "number(10,0) default 0")
+	private int complainCount = 0;
 	
 	
 	private String membership;

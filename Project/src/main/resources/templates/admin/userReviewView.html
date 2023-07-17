@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<style>
+    .larger-button {
+        width: 200px;
+        height: 50px;
+        background-color: silver;
+    }
+    
+    th {
+        font-size: 1.3em;
+    }
+    
+    td {
+        font-size: 0.9em;
+    }
+    
+	#checkMessage {
+	  font-size: 24px;
+	  color: lightcoral;
+	  text-align: center;
+	}
+	
+	#message {
+	  color: #ff8888; /* 연한 빨강색으로 설정 */
+	}
+	
+	#impossibleMessage {
+	  color: #ff8888; /* 연한 빨강색으로 설정 */
+	}
+	
+	#updateTimesOverMessage {
+	  color: #ff8888; /* 연한 빨강색으로 설정 */
+	}
+	
+	#updateTimesText {
+	    font-size: 20px; /* 원하는 크기로 수정하세요 */
+	    color: lightcoral; /* 연한 빨강색으로 변경하세요 */
+	}
+	
+	#reviewDeleteMessage {
+	  color: #ff8888; /* 연한 빨강색으로 설정 */
+	}
+	
+	
+</style>
+
+
+<meta charset="UTF-8">
+<title>작성 리뷰 상세보기</title>
+</head>
+<body onload="onloadCheck()">
+		
+	<hr>
+	<h2 align="center">유저 리뷰</h2><hr>
+	
+	<br><br>
+	<h2 align="center" id="nullMsg" 
+		th:style="${nullCheckMsg == 'O'} ? 'display: block; color: lightcoral;' : 'display: none;'">
+						등록된 리뷰가 없습니다.</h2>
+		
+	<form action="writeReviewUpdateProc" method="post">
+	
+		<table id="review" style="width: 100%; border-collapse: separate; border-spacing: 0 10px;">
+		
+			<tbody align="center" th:each="review : ${reviewList}">
+					
+					<tr></tr><tr></tr><tr></tr><tr></tr>
+				
+				<tr>
+					<th>유저 아이디</th>
+				</tr>
+				
+				<tr>	
+					<td th:text="${username}"></td>
+				</tr>
+				
+					<tr></tr><tr></tr>	
+					
+				<tr>
+					<th>리뷰 내용</th>
+				</tr>
+				
+					<tr></tr>
+				
+				<tr>
+					<td th:text="${review.userReivew_content}" id="review_content"></td>
+				</tr>
+				
+				<tr id="review_contentUpdate" style="display: none;">
+					<td>
+						<button type="button" onclick="review_contentUpdate()">수정</button>
+					</td>
+				</tr>
+				
+					<tr></tr><tr></tr>	
+				
+				<tr>
+					<th>강의 점수</th>
+				</tr>
+				
+				<tr>	
+					<td th:text="${review.user_review_score + '점'}" id="lectureReviewScore"></td>
+				</tr>
+				
+				<tr id="lectureScoreUpdate" style="display: none;">
+					<td>
+						<button type="button" onclick="lectureScoreUpdate()">수정</button>
+					</td>
+				</tr>
+				
+					<tr></tr><tr></tr>	
+					
+				<tr>
+					<th>작성 시간</th>
+				</tr>
+				
+				<tr>	
+					<td>
+						<span th:text="${#dates.format(review.createDate, 'yyyy년 MM월 dd일 HH시 mm분')}"></span>
+					</td>
+				</tr>
+				
+					<tr></tr><tr></tr><tr></tr><tr></tr>
+				
+				<tr id="updateTimesView" style="display: none;">
+					<td id="updateTimesText" th:text="${'현재까지  ' + review.update_times + '번 수정됨'}"></td>
+				</tr>
+				
+					<tr></tr><tr></tr><tr></tr><tr></tr>
+					
+				<tr id="submitButton" style="display: none;">
+					<td>
+						<input type="hidden" name="userReivew_num" th:value="${review.userReivew_num}">
+						<input type="hidden" name="lecture_num" th:value="${review.lecture_num}">
+						<input type="hidden" name="lector_num" th:value="${review.lector_num}">
+						<input type="hidden" name="update_times" th:value="${review.update_times}">
+						<input type="hidden" name="user_id" th:value="${review.user_id}">
+						
+						<input type="hidden" name="userReivew_content" 
+									id="hidden_review_content" th:value="${review.userReivew_content}">
+						
+						<input type="hidden" name="user_review_score" 
+									id="hidden_lecture_review_score" th:value="${review.user_review_score}">
+						
+						<button type="submit" class="larger-button">저장</button>
+					</td>
+				</tr>
+				
+					<tr></tr><tr></tr><tr></tr><tr></tr><tr></tr><tr></tr><tr></tr><tr></tr><tr></tr><tr></tr>
+					
+				<tr id="reviewDeleteMessage" style="display: none;">
+					<th>리뷰 작성 이후 일주일이 경과된 리뷰는 삭제 이후에도 점수에 반영되지않습니다.</th>
+				</tr>
+				
+					<tr></tr><tr></tr>
+				
+				<tr>	
+					<td>
+						<button type="button" onclick="reviewDelete()" class="larger-button">리뷰 삭제</button>
+					</td>
+				</tr>
+				
+				<tr>
+					<td>
+						<div style="display: none;" th:text="${review.createDate}" id="reviewCreateDate"></div>
+						<div style="display: none;" th:text="${review.user_review_score}" id="lecture_review_score"></div>
+						
+						<div style="display: none;" th:text="${review.update_times}" id="update_times"></div>
+						<div style="display: none;" th:text="${review.userReivew_num}" id="reivew_num"></div>
+						<div style="display: none;" th:text="${nullCheckMsg}" id="nullCheckMsg"></div>
+					</td>
+				</tr>
+				
+			</tbody>
+			
+		</table>
+		
+		
+		
+	</form>	
+	
+<script>
+	
+	var beforeDeleteCheckDate = "X";
+
+	function reviewDelete() {
+		var reivew_num = document.getElementById("reivew_num").textContent;
+
+		var result = confirm("해당 리뷰를 정말 삭제하시겠습니까?");
+
+		if (result) {
+			window.location.href = "userReviewDelete?userReivew_num=" + reivew_num 
+									+ "&beforeDeleteCheckDate=" + beforeDeleteCheckDate;
+			alert("정상적으로 해당 강의를 삭제했습니다.");
+		
+		} else {
+			window.close();
+		}
+	}
+	
+
+	function onloadCheck() {
+		
+		var reviewCreateDate = document.getElementById("reviewCreateDate").textContent;
+		var dateParts = reviewCreateDate.split('-');
+		
+			var year = parseInt(dateParts[0], 10);
+			var month = parseInt(dateParts[1], 10) - 1;
+			var day = parseInt(dateParts[2], 10);
+			
+				var createDate = new Date(year, month, day); // 리뷰 작성 시간
+		
+					var after7dayCreateDate = new Date(createDate.getTime()); // 일주일 이후의 시간
+					after7dayCreateDate.setDate(after7dayCreateDate.getDate() + 7);
+		
+		var nowDate = new Date(); // 현재 시간
+		
+		var message = document.getElementById("message");
+		var impossibleMessage = document.getElementById("impossibleMessage");
+		
+		var review_contentUpdate = document.getElementById("review_contentUpdate");
+		var lectureScoreUpdate = document.getElementById("lectureScoreUpdate");
+		var submitButton = document.getElementById("submitButton"); 
+		
+		var update_times = parseInt(document.getElementById("update_times").textContent, 10); 
+		var updateTimesOverMessage = document.getElementById("updateTimesOverMessage");
+		
+			if(nowDate < after7dayCreateDate && update_times < 3) {
+				message.style.display = "";
+				
+				review_contentUpdate.style.display = "";
+				lectureScoreUpdate.style.display = "";
+				
+				submitButton.style.display = "";
+			
+					} else if(update_times === 3) {
+						updateTimesOverMessage.style.display = "";
+				
+						} else {
+							impossibleMessage.style.display = "";
+						}
+		
+		// update_times > 0 일 때 화면에 출력
+		var updateTimesView = document.getElementById("updateTimesView");
+		
+				if(update_times > 0) {
+					updateTimesView.style.display = "";
+				}
+		
+		// 삭제 안내 메시지
+		var reviewDeleteMessage = document.getElementById("reviewDeleteMessage");
+		
+				if(nowDate > after7dayCreateDate) {
+					beforeDeleteCheckDate = "O";
+					reviewDeleteMessage.style.display = "";
+				}
+	}
+
+	function review_contentUpdate() {
+		var width = 640;
+	    var height = 600;
+	    
+	    var review_content = document.getElementById("review_content").textContent;
+	    
+	    var popupOptions = 'width=' + width + ', height=' + height + ', resizable=yes, scrollbars=yes';
+		var url = 'userReview_contentUpdate?userReivew_content=' + review_content;
+		 
+	    window.open(url, '_blank', popupOptions);
+	}
+	
+	function updateReview_content(newReview_content) {
+		var review_content = document.getElementById("review_content");
+		var hidden_review_content = document.getElementById("hidden_review_content");
+		
+		review_content.textContent = newReview_content;
+		hidden_review_content.value = newReview_content
+	}
+	
+	
+	function lectureScoreUpdate() {
+		var width = 640;
+	    var height = 600;
+	    
+	    var lecture_review_score = document.getElementById("lecture_review_score").textContent;
+	    
+	    var popupOptions = 'width=' + width + ', height=' + height + ', resizable=yes, scrollbars=yes';
+		var url = 'user_review_scoreUpdate?user_review_score=' + lecture_review_score;
+		 
+	    window.open(url, '_blank', popupOptions);
+	}
+	
+	function updateLectureScore(newLecture_review_score) {
+		var lectureReviewScore = document.getElementById("lectureReviewScore");
+		var hidden_lecture_review_score = document.getElementById("hidden_lecture_review_score");
+		
+		lectureReviewScore.textContent = newLecture_review_score + ".0점";
+		hidden_lecture_review_score.value = newLecture_review_score;
+	}	
+
+	
+	
+
+</script>
+	
+	
+</body>
+</html>

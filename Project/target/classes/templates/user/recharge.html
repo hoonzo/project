@@ -17,7 +17,7 @@
 
 	<h2 align="center">토큰 충전 페이지</h2>
 	<br><br>
-	<form action="rechargeProc" method="get" id="rechargeForm" align="center">
+	<form action="rechargeProc" method="get" id="rechargeForm" onsubmit="return validateForm()" align="center">
 		
 		
 		<input type="text" name="pay" id="pay" placeholder="충전할 토큰의 갯수를 입력하세요." 
@@ -61,7 +61,7 @@
 			
 		} else if(pay > 9998){ // 최대 충전 가능 수량 제한
 			document.getElementById("pay").value = "9999";
-			alert("토큰의 최대 보유 가능한 수량은 9999개 입니다.")
+			alert("토큰의 보유 가능한 최대 수량은 9999개 입니다.")
 		
 		} else { 
 			var numberWithCommas = parseFloat(pay).toLocaleString();
@@ -142,7 +142,19 @@
 			 change();
 		 }
 	}
-
+	
+	
+	function validateForm() {
+		var pay = document.getElementById("pay");
+		
+		if(!pay.value) {
+			alert("환전하실 토큰을 입력해주세요.");
+			return false;
+		}
+		
+		return true;
+		
+	}
 
 </script>	
 	

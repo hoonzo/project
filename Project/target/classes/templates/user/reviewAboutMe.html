@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+
+<style>
+    #viewOptionCheck {
+		width: 200px;
+		height: 30px;
+		font-size: 16px;
+	}
+	
+	#lectureThemeCheck {
+		width: 200px;
+		height: 30px;
+		font-size: 16px;
+	}
+	
+	#search {
+		width: 200px;
+		height: 30px;
+		font-size: 16px;
+	}
+	
+	#size {
+		width: 100px;
+		height: 30px;
+		font-size: 16px;
+	}
+	
+	.color {
+		color: red;
+		font-weight: bold;
+		pointer-events: none;
+		font-size: 20px;
+	}
+	
+    .page-gap {
+        margin-right: 10px; /* 간격을 늘리기 위한 추가 간격 설정 */
+    }
+    
+    .larger-button {
+        width: 200px;
+        height: 50px;
+        background-color: silver;
+    }
+   
+
+
+</style>
+
+<meta charset="UTF-8">
+<title>내게 작성된 리뷰 목록</title>
+</head>
+<body onload="onloadCheck()">
+	
+	<h2 align="center">내게 작성된 리뷰 목록</h2>
+	<br><br>
+	
+	<h2 align="center" id="nothingReviewMsg" 
+			style="display : none; font-size: 26px; color: lightcoral;">
+		아직까지 작성된 리뷰가 없습니다.
+	</h2>
+	
+	
+	
+	<table id="reviewList" align="center"
+			style="width: 60%; border-collapse: separate; border-spacing: 0 10px; 
+				display : none;">
+
+		<tbody align="center" th:each="item, num : ${reviewAboutMePageList}">
+		
+		    <tr>
+		        <td colspan="2"><hr><hr></td>
+		    </tr>
+		    
+		    <tr>
+		        <th>리뷰 내용<br><br></th>
+		        
+		    </tr>
+		    
+		    <tr>
+		    	<td th:text="${item.userReivew_content}" class="changeWon"></td>
+		    </tr>
+		    
+			    <tr>
+			        <td colspan="2"><br></td>
+			    </tr>
+		    
+		    <tr>
+		        <th>리뷰 점수<br><br></th>
+		    </tr>
+		    
+		    <tr>
+		    	 <td th:text="${item.user_review_score}" class="pay"></td>
+		    </tr>
+		    
+				 <tr>
+			        <td colspan="2"><br></td>
+			    </tr>
+			
+		     <tr>
+		        <th>작성 시간<br><br></th>
+		    </tr>
+		    
+		    <tr>
+		    	<td>
+		    	 	<span th:text="${#dates.format(item.createDate, 'yyyy년 MM월 dd일 HH시 mm분')}"></span>
+		    	</td>
+		    </tr>
+		    
+		     <tr>
+		        <td colspan="2"><hr><hr></td>
+		    </tr>
+	   
+		</tbody>
+
+	</table>
+
+	<br><br>
+   <div id="divElement" align="center" th:if="${reviewAboutMePageList.totalElements > 0}">
+	    <span th:each="pageNum : ${#numbers.sequence(startPage, endPage)}">
+	        <a th:href="@{/reviewAboutMe(page=${pageNum - 1})}" 
+	            th:text="${pageNum}"
+	            th:class="${pageNum == nowPage ? 'color' : ''}">>
+	        </a>
+	        <span class="page-gap"></span> <!-- 간격을 추가하는 요소 -->
+	    </span>
+	</div>
+	<br><br>
+	
+	<div th:text="${nullCheckMessage}" id="nullCheckMessage" style="display : none;"></div>
+	
+<script>
+	
+	function onloadCheck() {
+		var nullCheckMessage = document.getElementById("nullCheckMessage").textContent;
+		var reviewList = document.getElementById("reviewList");
+		var nothingReviewMsg = document.getElementById("nothingReviewMsg");
+		
+		if(nullCheckMessage == "O") {
+			nothingReviewMsg.style.display = "";
+		
+		} else {
+			reviewList.style.display = "";
+		}
+		
+	}
+
+
+
+</script>
+	
+</body>
+</html>

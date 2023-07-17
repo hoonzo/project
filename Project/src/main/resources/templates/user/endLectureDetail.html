@@ -120,8 +120,8 @@
 			
 		</table>
 		
-		<hr>
-		<h2 align="center">유저 리뷰</h2><hr>
+		<hr><hr>
+		<h2 align="center">유저 리뷰</h2>
 		
 		<br>
 		<h3 align="center" id="checkMessage" style="display: none;">아직 등록된 리뷰가 없습니다.</h3>
@@ -141,7 +141,10 @@
 				<tr>
 					<td th:text="${'*****' + review.user_id}"></td>
 					<td th:text="${review.review_content}"></td>
-					<td th:text="${review.lecture_review_score + '점'}"></td>
+					<td>
+						<span th:text="${review.lecture_review_score + '점'}"></span>
+    					<br><br>
+    				</td>
 				</tr>
 				
 			</tbody>

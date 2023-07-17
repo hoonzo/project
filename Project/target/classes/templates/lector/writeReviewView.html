@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+
+<style>
+    #viewOptionCheck {
+		width: 200px;
+		height: 30px;
+		font-size: 16px;
+	}
+	
+	#lectureThemeCheck {
+		width: 200px;
+		height: 30px;
+		font-size: 16px;
+	}
+	
+	#search {
+		width: 200px;
+		height: 30px;
+		font-size: 16px;
+	}
+	
+	#size {
+		width: 100px;
+		height: 30px;
+		font-size: 16px;
+	}
+	
+	.color {
+		color: red;
+		font-weight: bold;
+		pointer-events: none;
+		font-size: 20px;
+	}
+	
+    .page-gap {
+        margin-right: 10px; /* 간격을 늘리기 위한 추가 간격 설정 */
+    }
+    
+    .larger-button {
+        width: 200px;
+        height: 50px;
+        background-color: silver;
+    }
+   
+
+
+</style>
+
+<meta charset="UTF-8">
+<title>내가 작성한 리뷰 목록</title>
+</head>
+<body>
+	
+	<h2 align="center">내가 작성한 리뷰 목록</h2><br><br>
+	
+	<table style="width: 100%; border-collapse: separate; border-spacing: 0 10px;">
+
+		<thead align="center">
+			<tr>
+				<th>리뷰 번호</th>
+				<th>리뷰 내용</th>
+				<th>리뷰 작성 시간</th>
+			</tr>
+		</thead>
+
+		<tbody align="center">
+			<tr th:each="review : ${writeReviewPageList.content}">
+				
+				<td th:text="${review.userReivew_num}"></td>
+				<td>
+					<a th:href="@{'writeReviewDetail' + '?lecture_num=' + ${review.lecture_num} +
+											'&user_id=' + ${review.user_id}}"
+						th:text="${review.userReivew_content}">
+					</a>
+				</td>
+				<td><span th:text="${#dates.format(review.createDate, 'yyyy년 MM월 dd일 HH시 mm분')}"></span></td>
+			</tr>
+		</tbody>
+
+	</table>
+
+	<br><br>
+   <div id="divElement" align="center" th:if="${writeReviewPageList.totalElements > 0}">
+	    <span th:each="pageNum : ${#numbers.sequence(startPage, endPage)}">
+	        <a th:href="@{/reviewManagement(page=${pageNum - 1})}" 
+	            th:text="${pageNum}"
+	            th:class="${pageNum == nowPage ? 'color' : ''}">>
+	        </a>
+	        <span class="page-gap"></span> <!-- 간격을 추가하는 요소 -->
+	    </span>
+	</div>
+	
+</body>
+</html>

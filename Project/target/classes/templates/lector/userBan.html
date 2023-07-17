@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+
+<style>
+	.larger-button {
+		width: 200px;
+		height: 50px;
+		background-color: silver;
+		align: center;
+	}
+
+</style>
+
+</head>
+<body>
+	
+	<h2 align="center">유저 상세 보기</h2>
+	
+	<table style="width: 100%; border-collapse: separate; border-spacing: 0 10px;">
+		
+		<tbody align="center" th:each="user : ${userDetailList}">
+		
+			<tr>
+				<th>아이디</th>
+			</tr>
+			
+			<tr>
+				<td><span th:text="${user.username}" id="username"></span></td>
+			</tr>
+			
+			<tr>
+				<th>매너 스코어</th>
+			</tr>
+			
+			<tr>
+				<td><span th:text="${user.manner_score}"></span></td>
+			</tr>
+			
+			<tr>
+				<th>전화 번호</th>
+			</tr>
+			
+			<tr>
+				<td><span th:text="${user.phone}"></span></td>
+			</tr>
+			
+			<tr></tr>
+			<tr></tr>
+			<tr></tr>
+			
+			<tr>
+				<td><button type="button" class="larger-button" onclick="userBan()">반려</button></td>
+			</tr>
+			
+			<tr>
+				<td th:text="${lecture_num}" id="lecture_num" style="display : none;"></td>
+			</tr>
+			
+		</tbody>
+	</table>
+
+
+<script>
+
+	function userBan() {
+		
+		var result = confirm("해당 유저를 정말 취소 처리하시겠습니까?");
+
+		if (result) {
+			var username = document.getElementById("username").textContent;
+			var lecture_num = document.getElementById("lecture_num").textContent;
+			
+			window.location.href = "userBanProc?username=" + username + '&lecture_num=' + lecture_num;
+		
+		} else {
+			window.close();
+		}
+		
+		
+		
+		
+	}
+
+
+</script>	
+	
+</body>
+</html>

@@ -90,7 +90,8 @@ public interface LectorsRepository extends JpaRepository<Lectors, Integer> {
 	@Query("UPDATE Lectors l SET l.all_review_score = :all_review_score WHERE l.lector_num = :lector_num")
 	void all_review_scoreUpdateByLector_num(double all_review_score, int lector_num);
 	
-	
+	@Query("SELECT l.user_id FROM Lectors l WHERE l.lector_num = :lector_num")
+	int findUser_idByLector_num(int lector_num);
 	
 	
 	

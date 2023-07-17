@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+
+<style>
+    #viewOptionCheck {
+		width: 200px;
+		height: 30px;
+		font-size: 16px;
+		position: relative;
+        left: 30px;
+	}
+	
+	#lectureThemeCheck {
+		width: 200px;
+		height: 30px;
+		font-size: 16px;
+	}
+	
+	#search {
+		width: 200px;
+		height: 30px;
+		font-size: 16px;
+	}
+	
+	#size {
+		width: 100px;
+		height: 30px;
+		font-size: 16px;
+	}
+	
+	.color {
+		color: red;
+		font-weight: bold;
+		pointer-events: none;
+		font-size: 20px;
+	}
+	
+    .page-gap {
+        margin-right: 10px; /* 간격을 늘리기 위한 추가 간격 설정 */
+    }
+    
+    .larger-button {
+        width: 200px;
+        height: 50px;
+        background-color: silver;
+    }
+   
+
+
+</style>
+
+<meta charset="UTF-8">
+<title>강의 리스트</title>
+</head>
+<body>
+	
+	<h2 align="center">등록 강의 관리</h2>
+	
+	<select id="viewOptionCheck" onchange="selectOption()">
+		<option value="" selected hidden> 옵션을 선택하세요</option>
+		<option value="all">전체</option>
+		<option value="notEndLecture">진행중인 강의</option>
+		<option value="endLecture">종료된 강의</option>
+	</select>
+	<br><br><br>
+	
+	<table style="width: 100%; border-collapse: separate; border-spacing: 0 10px;">
+
+		<thead align="center">
+			<tr>
+				<th>강의 번호</th>
+				<th>강의 제목</th>
+				<th>강의 날짜</th>
+			</tr>
+		</thead>
+
+		<tbody align="center">
+			<tr th:each="lecture : ${lecturePageList.content}">
+				
+				<td th:text="${lecture.lecture_num}"></td>
+				<td>
+					<a th:href="@{'lectureManagementDetail' + '?lecture_num=' + ${lecture.lecture_num}}"
+						th:text="${lecture.lecture_title}">
+					</a>
+				</td>
+				<td><span th:text="${#temporals.format(lecture.lecture_date, 'yyyy년 MM월 dd일')}"></span></td>
+				
+				<td style="display: none;" th:text="${lector_num}"></td>
+			    
+			</tr>
+		</tbody>
+
+	</table>
+
+	<br><br>
+   <div id="divElement" align="center" th:if="${lecturePageList.totalElements > 0}">
+	    <span th:each="pageNum : ${#numbers.sequence(startPage, endPage)}">
+	        <a th:href="@{/endLectureListView(page = ${pageNum - 1})}" 
+	            th:text="${pageNum}"
+	            th:class="${pageNum == nowPage ? 'color' : ''}">>
+	        </a>
+	        <span class="page-gap"></span> <!-- 간격을 추가하는 요소 -->
+	    </span>
+	</div>
+
+<script>
+	function selectOption() {
+		var selectElement = document.getElementById("viewOptionCheck");
+		var selectedValue = selectElement.value;
+		
+		if(selectedValue == 'all') { // 전체
+			window.location.href = "lectureManagement";
+			
+		} else if(selectedValue == 'notEndLecture') { // 진행중인 강의
+			window.location.href = "notEndLectureListView";
+			
+		} else { // 종료된 강의
+			window.location.href = "endLectureListView";
+		
+		}
+	}
+
+
+
+
+</script>
+
+
+
+</body>
+</html>

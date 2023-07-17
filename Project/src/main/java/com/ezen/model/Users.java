@@ -1,6 +1,7 @@
 package com.ezen.model;
 
 import java.sql.Timestamp;
+import java.time.LocalDate;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -47,9 +48,19 @@ public class Users {
     private String prefer_lecture;
     
     private double manner_score;
+    
+    @Column(columnDefinition = "number(10,0) default 0")
+    private double all_review_score = 0;
+
+    private String reviewWriteCheck;
+    
+    
     private double token;
     
     private String role; //ROLE_USER, ROLE_ADMIN
+    
+    private LocalDate dateApplicationForDelete;
+    
     
     @CreationTimestamp
     private Timestamp createDate;

@@ -2,6 +2,7 @@ package com.ezen.model;
 
 import java.sql.Timestamp;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -29,6 +30,12 @@ public class Review {
 	
 	private int lector_num;
 	private double lector_review_score;
+	
+	@Column(columnDefinition = "number(10,0) default 0")
+	private int update_times;
+	
+	private String hide_review = "X";
+	
 	
 	@CreationTimestamp
 	private Timestamp createDate;

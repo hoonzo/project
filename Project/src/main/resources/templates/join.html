@@ -50,7 +50,8 @@
 
 
 	</form>
-
+	
+	<div id="checkPasswordMsg" style="display : none;">X</div>
 
 
 <script>
@@ -109,6 +110,8 @@
 		var eng = password.search(/[a-z]/ig);
 		var spe = password.search(/[`~!@@#$%^&*|₩₩₩'₩";:₩/?]/gi);
 		var passwordError = document.getElementById("passwordError");
+		
+		var checkPasswordMsg = document.getElementById("checkPasswordMsg"); /////
 
 		if (password.length < 8) {
 			passwordError.innerText = "비밀번호는 8자 이상이어야 합니다.";
@@ -123,6 +126,8 @@
 		} else {
 			passwordError.style.display = "none";
 			document.getElementById("password").style.border = "1px solid blue";
+			
+			checkPasswordMsg.textContent = "O"; ///////
 		}
 	}
 
@@ -152,6 +157,9 @@
 		var email = document.getElementById("email").value;
 		var phone = document.getElementById("phone").value;
 		var preferLecture = document.getElementsByName("prefer_lecture[]");
+		
+		var checkPasswordMsg = document.getElementById("checkPasswordMsg").textContent;
+			
 
 		if (!idAvailable) {
 			alert("아이디 중복 체크를 해주세요.");
@@ -197,6 +205,16 @@
 
 		if (selectedPreferLecture.length === 0) {
 			alert("선호하는 항목을 선택해주세요.");
+			return false;
+		}
+		
+		if(password != confirmPassword) {
+			alert("비밀번호와 비밀번호 확인이 일치하지않습니다.");
+			return false;
+		}
+		
+		if(checkPasswordMsg == "X") {
+			alert("올바른 비밀번호를 입력해주세요.");
 			return false;
 		}
 

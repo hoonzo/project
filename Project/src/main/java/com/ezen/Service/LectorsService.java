@@ -120,5 +120,9 @@ public class LectorsService {
 		lectorsRepository.all_review_scoreUpdateByLector_num(all_review_score, lector_num);
 	}
 	
+	public int findUser_idByLector_num(int lector_num) {
+		return lectorsRepository.findUser_idByLector_num(lector_num);
+	}
+	
 
 }

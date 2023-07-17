@@ -23,6 +23,12 @@
 	  text-align: center;
 	}
 	
+	#complainLectureMsg {
+	  font-size: 24px;
+	  color: lightcoral;
+	  text-align: center;
+	}
+	
 	
 </style>
 
@@ -30,8 +36,8 @@
 <meta charset="UTF-8">
 <title>Insert title here</title>
 </head>
-<body>
-	
+<body onload="onloadCheck()">
+
 	<form action="lectureReservation" method="get">
 		<h2 align="center">강의 상세보기</h2><br>
 		
@@ -147,10 +153,25 @@
 						
 						<div style="display: none;" th:text="${myToken}" id="myToken"></div>
 						<div style="display: none;" th:text="${lecture.price}" id="lecture_price"></div>
+						<div style="display: none;" th:text="${complainCheckMsg}" id="complainCheckMsg"></div>
 						
 						<button class="larger-button" type="button" onclick="reservationCheck()">예약</button>
 					</td>
 				</tr>
+				
+					<tr></tr><tr></tr><tr></tr><tr></tr><tr></tr><tr></tr><tr></tr><tr></tr><tr></tr><tr></tr><tr></tr><tr></tr>
+					<tr></tr><tr></tr><tr></tr><tr></tr><tr></tr><tr></tr><tr></tr><tr></tr><tr></tr><tr></tr><tr></tr><tr></tr>
+				
+				
+				<tr id="complainLectureMsg" style="display: none;">
+					<td>접수하신 신고에 대해 검토 중입니다.</td>
+				</tr>
+				
+				<tr id="complainLecture" style="display: none;">
+					<td><button type="button" onclick="complainLeture()">부적절한 강의 신고</button></td>
+				</tr>
+				
+				<tr></tr><tr></tr><tr></tr><tr></tr><tr></tr><tr></tr>
 				
 			</tbody>
 			
@@ -162,6 +183,29 @@
 	</form>	
 	
 <script>
+
+	function onloadCheck() {
+		var complainCheckMsg = document.getElementById("complainCheckMsg").textContent;
+		var complainLecture = document.getElementById("complainLecture");
+		var complainLectureMsg = document.getElementById("complainLectureMsg")
+		
+		if(complainCheckMsg === "X") {
+			complainLecture.style.display = "";
+			
+		} else {
+			complainLectureMsg.style.display = "";
+		}
+		
+		
+		
+	}
+	
+
+	function complainLeture() {
+		var lecture_num = document.getElementById("lecture_num").textContent;
+		
+		window.location.href = "complainLeture?lecture_num=" + lecture_num;
+	}
 
 	function lectorReview() {
 		var lector_num = document.getElementById("lector_num").textContent;

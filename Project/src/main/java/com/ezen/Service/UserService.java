@@ -1,5 +1,6 @@
 package com.ezen.Service;
 
+import java.time.LocalDate;
 import java.util.List; 
 
 import javax.transaction.Transactional;
@@ -113,6 +114,31 @@ public class UserService {
 	}
 	
 	
+	public String findUsernameById(int user_id) {
+		return userRepository.findUsernameById(user_id);
+	}
+	
+	@Transactional
+	public void updateAll_review_scoreByUser_id(double all_review_score, int user_id) {
+		userRepository.updateAll_review_scoreByUser_id(all_review_score, user_id);
+	}
+	
+	@Transactional
+	public void updateManner_scoreByUser_id(double manner_score, int user_id) {
+		userRepository.updateManner_scoreByUser_id(manner_score, user_id);
+	}
+	
+	@Transactional
+	public void updateReviewWriteCheckByUser_id(String reviewWriteCheck, int user_id) {
+		userRepository.updateReviewWriteCheckByUser_id(reviewWriteCheck, user_id);
+	}
+	
+	
+	
+	
+	
+	
+	
 	// 페이징 기능 설명
 	public Page<Users> getPagingUserlist(Pageable pageable) {
 		Pageable pageRequest = PageRequest.of(pageable.getPageNumber(), 4, Sort.by(Sort.Direction.DESC, "id"));
@@ -155,8 +181,46 @@ public class UserService {
 		return userRepository.searchUserByNameAndRole(keyword, role, pageRequest);
 	}
 	
+	public Users findManner_scoreByUser_id(int user_id) {
+		return userRepository.findManner_scoreByUser_id(user_id);
+	}
 	
+	public String findReviewWriteCheckByUsername(String username) {
+		return userRepository.findReviewWriteCheckByUsername(username);
+	}
 	
+	public Users findUsersByUser_id(int user_id) {
+		return userRepository.findUsersByUser_id(user_id);
+	}
+	
+	public double findAll_review_scoreByUser_id(int user_id) {
+		return userRepository.findAll_review_scoreByUser_id(user_id);
+	}
+	
+	public double findManner_scoreByUserId(int user_id) {
+		return userRepository.findManner_scoreByUserId(user_id);
+	}
+	
+	@Transactional
+	public void dateApplicationForDeleteInsert(String username) {
+		LocalDate aWeekLaterDate = LocalDate.now().plusDays(7);
+		userRepository.dateApplicationForDeleteInsert(aWeekLaterDate, username);
+	}
+
+	public int deleteApplicationCheck(String username) {
+		return userRepository.deleteApplicationCheck(username);
+	}
+	
+	@Transactional
+	public void deleteApplicationCancel(String username) {
+		userRepository.deleteApplicationCancel(username);
+	}
+	
+	@Transactional
+	public void deleteUser() {
+		LocalDate nowDate = LocalDate.now();
+		userRepository.deleteUser(nowDate);
+	}
 	
 	
 	

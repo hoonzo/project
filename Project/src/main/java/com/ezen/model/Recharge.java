@@ -21,9 +21,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class Recharge {
 	
-	@PostLoad
-	private void ChangeWon() {
-		this.changeWon = this.pay * 10000;
+	public void ChangeWon() {
+		this.changeWon = this.pay * 10000 + (this.pay * 10000 * 0.1);
 	}
 	
 	

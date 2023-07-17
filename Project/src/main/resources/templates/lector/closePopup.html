@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body onload="gg()">
+	
+	<h2 id="message" style="display : none;" th:text="${message}"></h2>
+	
+	
+	
+<script>
+	function gg() {
+		
+		var message = document.getElementById("message").textContent;
+		
+		if(message == 'userBan') {
+			alert("해당 유저를 정상적으로 취소 처리했습니다.")
+			
+			window.opener.location.reload(); // 부모 창 새로 고침
+			window.close();
+		
+		} else {
+			window.opener.location.reload(); // 부모 창 새로 고침
+			window.close();
+		}
+		
+		
+	}
+
+</script>	
+	
+</body>
+</html>

@@ -2,7 +2,11 @@ package com.ezen.Service;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired; 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import com.ezen.Repository.RechargeRepository;
@@ -20,8 +24,9 @@ public class RechargeService {
 		rechargeRepository.save(recharge);
 	}
 	
-	public List<Recharge> getTokenOrderList(int user_id) {
-		return rechargeRepository.findAllByUser_id(user_id);
+	public Page<Recharge> findMyRechargeList(Pageable pageable, int user_id) {
+		Pageable pageRequest = PageRequest.of(pageable.getPageNumber(), 2, Sort.by(Sort.Direction.DESC, "rechargeOrderNum"));
+		return rechargeRepository.findMyRechargeList(pageRequest, user_id);
 	}
 	
 	

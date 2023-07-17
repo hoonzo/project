@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>신고 확인</title>
+
+<style>
+    .larger-button {
+        width: 200px;
+        height: 50px;
+        background-color: silver;
+    }
+	
+	#selfInput {
+   		width: 500px; 
+   		height: 30px;
+  	}
+  	
+  	#complain_reason {
+   		height: 30px;
+  	}
+  	
+  	#rightWrongMsg {
+	    color: lightcoral;
+  	}
+
+</style>   
+    
+</head>
+
+<body>
+		<br><br>
+	<h1 align="center">신고된 강의 확인</h1>
+		<br><br>
+	<hr>
+	
+	<form action="complainResolveProc" method="post" align="center" onsubmit="return validateForm()">
+
+		<table style="width: 100%; border-collapse: separate; border-spacing: 0 10px;">
+		
+			<tbody align="center" th:each="complain : ${complainDetailList}">
+			
+				<tr>
+					<th>신고 접수 번호</th>
+				</tr>
+				
+				<tr>
+					<td><span th:text="${complain.complainLeture_num}"></span></td>
+				</tr>
+				
+				<tr></tr>
+	
+					<tr></tr><tr></tr>
+		
+				<tr>
+					<th>신고 유저 번호</th>
+				</tr>
+				
+				<tr>
+					<td><span th:text="${complain.user_id}"></span></td>
+				</tr>
+				
+					<tr></tr><tr></tr>
+				
+				<tr>
+					<th>신고된 강의 번호</th>
+				</tr>
+				
+				<tr>	
+					<td>
+						<span th:text="${complain.lecture_num}"></span>
+					</td>
+				</tr>
+				
+				<tr>	
+					<td>
+						<button type="button" onclick="lectureDetail()">강의 확인</button>
+					</td>
+				</tr>
+				
+					<tr></tr><tr></tr>
+				
+				<tr>
+					<th>신고 사유</th>
+				</tr>
+				
+				<tr>
+					<td><span th:text="${complain.complain_reason}"></span></td>
+				</tr>
+				
+					<tr></tr><tr></tr>
+				
+				<tr>
+					<th>신고 내용</th>
+				</tr>
+				
+				<tr>
+					<td><span th:text="${complain.complain_content}"></span></td>
+				</tr>
+				
+					<tr></tr><tr></tr>
+				
+				<tr>
+					<td>
+						<input type="hidden" name="complainLeture_num" th:value="${complain.complainLeture_num}">
+						<input type="hidden" name="rightWrong" id="rightWrong">
+						
+						
+						<div style="display: none;" th:text="${complain.lecture_num}" id="lecture_num"></div>
+					</td>
+				</tr>
+				
+				
+			</tbody>
+		</table>
+		
+		
+		<hr>
+		<h3>처리 내용</h3>
+		<hr><br> 
+		
+	    <input type="text" name="processingResult" id="processingResult" style="width: 600px; height:150px">
+		
+			<br><br>
+			
+		<h3 id="rightWrongMsg" style="display: none;">강사 잘못 없음.</h3>
+			
+			<br><br>
+			
+		<button type="button" onclick="lectorNoFault()">강사 무죄</button>
+			
+			<br><br><br><br>
+		
+		<button class="larger-button" type="submit">입력</button>
+
+	</form>
+
+	
+
+
+<script>
+	
+	function lectorNoFault() {
+		var rightWrong = document.getElementById("rightWrong");
+		var rightWrongMsg = document.getElementById("rightWrongMsg"); 
+		
+		rightWrongMsg.style.display = "";
+		rightWrong.value = 'O';
+	}
+	
+
+	function lectureDetail() {
+		
+		var width = 800;
+	    var height = 600;
+	    
+		    var lecture_num = document.getElementById("lecture_num").textContent;
+		    
+			    var popupOptions = 'width=' + width + ', height=' + height + ', resizable=yes, scrollbars=yes';
+			    var url = 'lectureManagementDetailByAdmin?lecture_num=' + lecture_num;
+			
+			    	window.open(url, '_blank', popupOptions);	
+	}
+	
+	
+	function validateForm() {
+
+		var processingResult = document.getElementById("processingResult");
+	    
+		// var checkPasswordMsg = document.getElementById("checkPasswordMsg").textContent;
+		
+			if (processingResult.value === "") {
+				alert("처리 내용을 입력하세요.");
+				return false;
+			}
+
+		alert("처리 완료");
+		return true;
+	}
+	
+	
+	
+</script>
+
+</body>
+</html>

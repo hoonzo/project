@@ -31,6 +31,12 @@
 	  color: red;
 	  font-size: 18px;
 	}
+	
+	 .clickable-text {
+        color: blue;
+        text-decoration: underline;
+        cursor: pointer;
+    }
    
 </style>
 
@@ -59,7 +65,7 @@
                 
                  <tr>
                 	<td>
-                		<input type="text" id="lecture_title" name="lecture_title"
+                		<input type="text" id="lecture_title" name="lecture_title" disabled
                 				th:placeholder="${item.lecture_title}" style="width: 600px; height:50px">
                 	</td>
                 </tr>
@@ -70,7 +76,7 @@
                 
                  <tr>
                 	<td>
-                		<input type="text" id="lecture_introduce" name="lecture_introduce"
+                		<input type="text" id="lecture_introduce" name="lecture_introduce" disabled
                 				th:placeholder="${item.lecture_introduce}" style="width: 600px; height:100px">
                 	</td>
                 </tr>
@@ -81,7 +87,7 @@
                 
                 <tr>
                 	<td>
-                		<input type="number" id="maxPersonnel" name="maxPersonnel"
+                		<input type="number" id="maxPersonnel" name="maxPersonnel" disabled
                 				min="0" max="20" step="1" th:placeholder="${item.maxPersonnel}"
 								 style="margin: 0 auto;">명
                 	</td>
@@ -140,7 +146,7 @@
                 
                 <tr>
                 	<td>
-                		<input type="date" id="lecture_date" name="lecture_date" onchange="dateCheck()">
+                		<input type="date" id="lecture_date" name="lecture_date" onchange="dateCheck()" disabled>
                 		
                 		<label for="lecture_start_time">시작</label>
 						<input type="time" id="lecture_start_time" name="lecture_start_time" onchange="startTimeCheck()" disabled>
@@ -156,17 +162,115 @@
                 
                 <tr>
                 	<td>
-                		토큰 <input type="number" id="price" name="price" min="0" max="20" step="1"
+                		토큰 <input type="number" id="price" name="price" min="0" max="20" step="1" disabled
 								th:placeholder="${item.price}" style="margin: 0 auto;">개
                 	</td>
-                </tr>   
+                </tr>
+            </tbody>
+                
+		    <tr>
+		        <th><br><br>수강 신청 유저</th>
+		    </tr>
+		    
+		    <tr id="reviewCheck" style="display: none;">
+			    <th style="font-size: 25px; color: #FFAAAA;">수강생의 리뷰를 작성해보세요!</th>
+			</tr>   
+		
+			<tbody>
+				<tr th:if="${reservationUserList.empty}">
+			    	<th style="font-size: 25px; color: #FFAAAA;">등록된 유저가 없습니다.</th>
+			    </tr>
+			</tbody>
+            
+            <tbody th:if="${reservationUserList != null}" th:each="item, num : ${reservationUserList}" align="center">    
+			    
+			    <tr>
+			    	<th th:text="${num.index + 1 + '번'}"></th>
+			    </tr>
+			    
+		    	<tr>
+					<td th:text="${item.username}" th:data-username="${item.username}" 
+							onclick="openPopup(this.getAttribute('data-username'))"
+							class="clickable-text">
+					</td>
+				</tr>
+			
+			</tbody>
+			
+		</table>	
+		<br><br><br>	
+			
+			
+			
+		<h2 id="userReviewHead" style="font-size: 23px; display: none;">리뷰</h2>	
+		
+		<br>
+		<h3 align="center" id="reviewCheckMessage" style="display: none; font-size: 21px; color: #FFAAAA;">
+			아직 등록된 리뷰가 없습니다.
+		</h3>
+	
+		<table id="userReview" style="display: none;">
+		
+			<thead align="center">
+					<tr>
+						<th>유저</th>
+						<th>리뷰</th>
+						<th>강의 평점</th>
+					</tr>
+			</thead>
+			
+			<tbody align="center" th:each="review : ${reviewList}">
+				
+				<tr>
+					<td th:text="${'*****' + review.user_id}"></td>
+					<td th:text="${review.review_content}"></td>
+					<td>
+						<span th:text="${review.lecture_review_score + '점'}"></span>
+    					<br><br>
+    				</td>
+				</tr>
+				
+			</tbody>
+			
+		</table>
+		
+				<br><br><br><br><br><br>
+		
+		<table>
+			
+			<tbody id="getToken" style="display: none;">
+				
+				<tr>
+					<th th:text="${'고생하셨습니다!!'}" style="font-size: 25px; color: #FF6666;"></th>
+				</tr>
+				
+				<tr>	
+					<th th:text="${'수강료 토큰 ' + lecture_fee + '개를 수령하세요!'}"
+							style="font-size: 25px; color: #FF6666;">
+					</th>
+				</tr>
+				
+				<tr>
+					<td>
+						<button type="button" class="larger-button" onclick="getToken()">토큰 수령</button>
+					</td>
+				</tr>
+			</tbody>
+
+            <tbody id="getTokenFinish" style="display: none;">
+				
+				<tr>
+					<th th:text="${'토큰  ' + lecture_fee + '개를 수령하셨습니다.'}" style="font-size: 25px; color: #FF6666;"></th>
+				</tr>
+			</tbody>   
+                
+                <tr></tr><tr></tr><tr></tr><tr></tr><tr></tr><tr></tr><tr></tr><tr></tr>
+	        
+	        <tbody th:each="item : ${lectureDetailList}">
 	            
 		        <tr>
 					<td>
 						<br>
-						
-						
-						
 						<input type="hidden" name="lecture_num" th:value="${item.lecture_num}">
 						<input type="hidden" name="lecture_theme" th:value="${item.lecture_theme}">
 						<input type="hidden" name="rentalCheck" id="rentalCheck">
@@ -183,13 +287,13 @@
 						<input type="hidden" name="practiceRoom_id" id="practiceRoom_id">
 						<input type="hidden" name="lecture_place" id="hiddenLecturePlace">
 						
-						<button type="submit" class="larger-button">수정</button>
+						<button type="submit" id="submitButton" class="larger-button">수정</button>
 					</td>
 				</tr>
 				
 				<tr></tr><tr></tr>
 				
-				<tr>
+				<tr id="lecture_delete" style="display : none;">
                 	<td>
                 		<button type="button" onclick="lectureDelete()" class="larger-button">강의 삭제</button>
                 	</td>
@@ -215,21 +319,168 @@
 						<div th:text="${item.rentalCheck}" id="rental_check" style="display: none;"></div>
 						<div th:text="${item.lector_num}" id="lector_num" style="display: none;"></div>
 						<div th:text="${item.lecture_num}" id="lectureNum" style="display: none;"></div>
+						
+						<div th:text="${item.user_num}" id="user_num" style="display: none;"></div>
+						
+						<div th:text="${dateCheckMessage}" id="dateCheckMessage" style="display: none;"></div>
+						<div th:text="${reservationCheckMessage}" id="reservationCheckMessage" style="display: none;"></div>
+						
+						<div th:text="${lecture_fee}" id="lecture_fee" style="display: none;"></div>
+						
+						<div th:text="${item.getTokenCheck}" id="getTokenCheck" style="display: none;"></div>
+						
+						
+						<div th:text="${nullCheckMessage}" id="nullCheckMassege" style="display: none;"></div>
+						
 					</td>
 				</tr>
 				  
-				
-				
-	        </tbody>
-	
+	       </tbody>
+			
 		</table> 
 		
+		<br><br>
 	</form>
 	
 	
 	
 
 <script>
+
+	function getToken() {
+		
+		var lector_num = document.getElementById("lector_num").textContent;
+		var lectureNum = document.getElementById("lectureNum").textContent;
+		var lecture_fee = document.getElementById("lecture_fee").textContent;
+		
+		window.location.href = "getToken?lector_num=" + lector_num + 
+										'&lecture_num=' + lectureNum +
+										'&lecture_fee=' + lecture_fee;
+		
+		alert("정상적으로 토큰을 전송했습니다!");
+	}
+	
+	function openPopup(username) {
+		
+		var reservationCheckMessage = document.getElementById("reservationCheckMessage").textContent;
+		
+		var lectureNum = document.getElementById("lectureNum").textContent;
+	
+		if(reservationCheckMessage == "O") {
+			var width = 640;
+		    var height = 480;
+			
+			var popupOptions = 'width=' + width + ', height=' + height + ', resizable=yes, scrollbars=yes';
+			var url = 'userBan?username=' + username + '&lecture_num=' + lectureNum;
+			 
+		    window.open(url, '_blank', popupOptions);
+		
+		} else if(reservationCheckMessage == "X") { // 리뷰 작성 페이지로 이동
+			var width = 800;
+		    var height = 700;
+			
+			var popupOptions = 'width=' + width + ', height=' + height + ', resizable=yes, scrollbars=yes';
+			var url = 'userReviewWrite?username=' + username + '&lecture_num=' + lectureNum;
+			 
+		    window.open(url, '_blank', popupOptions);
+			
+			
+		} else {
+			alert("강의가 종료되어 확인할 수 없습니다.");
+		}
+	}
+
+
+	function rental_check() {
+		
+		
+		var dateCheckMessage = document.getElementById("dateCheckMessage").textContent;
+		var reservationCheckMessage = document.getElementById("reservationCheckMessage").textContent;
+		
+		var getTokenCheck = document.getElementById("getTokenCheck").textContent;
+		var user_num = document.getElementById("user_num").textContent;
+		
+		var lecture_title = document.getElementById("lecture_title");
+		var lecture_introduce = document.getElementById("lecture_introduce");
+		var maxPersonnel = document.getElementById("maxPersonnel");
+		var lecture_date = document.getElementById("lecture_date");
+		var price = document.getElementById("price");
+
+		var otherPlace = document.getElementById("otherPlace");
+		var lecture_delete = document.getElementById("lecture_delete");
+		
+		var reviewCheck = document.getElementById("reviewCheck");
+		var getToken = document.getElementById("getToken");
+		var getTokenFinish = document.getElementById("getTokenFinish");
+		
+		var userReview = document.getElementById("userReview");
+		var reviewCheckMessage = document.getElementById("reviewCheckMessage");
+		var userReviewHead = document.getElementById("userReviewHead");
+		
+		var nullCheckMassege  = document.getElementById("nullCheckMassege").textContent;
+		
+		
+		if(dateCheckMessage == "O") {
+			
+			lecture_title.removeAttribute("disabled");
+			lecture_introduce.removeAttribute("disabled");
+			maxPersonnel.removeAttribute("disabled");
+			lecture_date.removeAttribute("disabled");
+			price.removeAttribute("disabled");
+			lecture_delete.style.display = "";
+			
+			var rental_check = document.getElementById("rental_check").textContent;
+			
+				if(rental_check === "") { // rentalcheck에 숫자가 등록되어 대여 장소가 있을 경우,
+					
+					var otherPlace = document.getElementById("otherPlace");
+					
+					otherPlace.style.display = "";
+					
+					} else if(rental_check === 'X') { // 대여 이후 취소했을 경우,
+						
+						var elements2 = document.getElementsByClassName("rentalCancelAfter");
+						
+						    for (var i = 0; i < elements2.length; i++) {
+						      elements2[i].style.display = "";
+						    }
+					
+					} else { // 그 밖에
+						
+						var lecture_delete = document.getElementById("lecture_delete");
+						lecture_delete.style.display = "";
+					
+						var elements = document.getElementsByClassName("rentalCancel");
+						
+						    for (var i = 0; i < elements.length; i++) {
+						      elements[i].style.display = "";
+						    }
+						
+					}
+			
+		} else if(dateCheckMessage == "X" && reservationCheckMessage == "X"){
+			
+			reviewCheck.style.display = "";
+			userReviewHead.style.display = "";
+			userReview.style.display = "";
+		
+				if(getTokenCheck == "X" && user_num != "") {
+					getToken.style.display = "";
+					
+				} else if(getTokenCheck == "O" && user_num != "") {
+					getTokenFinish.style.display = "";
+				}
+			
+					if(nullCheckMassege === 'O') { // 등록된 리뷰가 없을 경우,
+						reviewCheckMessage.style.display = "";
+						userReview.style.display = "none";
+					}
+					
+			
+			
+		} 
+		
+	}
 
 	function lectureDelete() {
 		var lectureNum = document.getElementById("lectureNum").textContent;
@@ -261,6 +512,8 @@
 		
 		var pricelInput = document.getElementById("price");
 		var priceValue = pricelInput.value;
+		
+		var dateCheckMessage = document.getElementById("dateCheckMessage").textContent;
 			
 		if(!lecture_title.value) { // 설정한 내용이 없으면, 기본값으로 설정한다.
 			var lectureTitle = document.getElementById("lectureTitle").textContent;
@@ -302,7 +555,12 @@
 		if(priceValue === "") {
 			var defaultPrice = document.getElementById("defaultPrice").textContent;
 		    document.getElementById("price").value = parseInt(defaultPrice, 10);
-		} 
+		}
+		
+		if(dateCheckMessage == "X") {
+			alert("해당 강의는 수정할 수 없습니다.");
+	        return false;
+		}
 		
 		alert("정상적으로 강의를 수정하였습니다.");
 	    return true;
@@ -333,35 +591,6 @@
 		window.location.href = "myRentalList?lector_num=" + lector_num;
 	}
 	
-	
-
-	function rental_check() {
-		var rental_check = document.getElementById("rental_check").textContent;
-
-		if(rental_check === "") { // rentalcheck에 숫자가 등록되어 대여 장소가 있을 경우,
-			
-			var otherPlace = document.getElementById("otherPlace");
-			
-			otherPlace.style.display = "";
-			
-		} else if(rental_check === 'X') { // 대여 이후 취소했을 경우,
-			
-			var elements2 = document.getElementsByClassName("rentalCancelAfter");
-			
-		    for (var i = 0; i < elements2.length; i++) {
-		      elements2[i].style.display = "";
-		    }
-		
-		} else { // 그 밖에
-			
-			var elements = document.getElementsByClassName("rentalCancel");
-			
-		    for (var i = 0; i < elements.length; i++) {
-		      elements[i].style.display = "";
-		    }
-			
-		}
-	}
 	
 	function otherPlace() {
 		var width = 800;

@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html xmlns="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>작성 리뷰 업데이트</title>
+
+<style>
+.larger-button {
+	width: 200px;
+	height: 50px;
+	background-color: silver;
+	align: center;
+}
+</style>
+
+</head>
+<body>
+	<h2 align="center">강의 점수 수정</h2>
+
+	<form style="text-align: center;">
+				
+		<table align="center">
+		
+			<tr>
+                <th><br>수강하셨던 강의의 점수를 입력해주세요.</th>
+            </tr>
+            
+            <tr></tr><tr></tr><tr></tr><tr></tr><tr></tr>
+            <tr></tr><tr></tr><tr></tr><tr></tr><tr></tr>
+            
+            <tr>
+            	<td>1 &nbsp;&nbsp; 2 &nbsp;&nbsp; 3 &nbsp;&nbsp; 4 &nbsp;&nbsp; 5</td>
+            </tr>
+            
+            <tr></tr><tr></tr><tr></tr><tr></tr><tr></tr>
+            
+            
+            <tr>
+            	<td>
+            		<input type="radio" name="e" id="newLecture_review_score" value="1" th:checked="${user_review_score == 1}">
+            		<input type="radio" name="e" id="newLecture_review_score" value="2" th:checked="${user_review_score == 2}">
+            		<input type="radio" name="e" id="newLecture_review_score" value="3" th:checked="${user_review_score == 3}">
+            		<input type="radio" name="e" id="newLecture_review_score" value="4" th:checked="${user_review_score == 4}">
+            		<input type="radio" name="e" id="newLecture_review_score" value="5" th:checked="${user_review_score == 5}">
+            	</td>
+            </tr>
+            
+            <tr></tr><tr></tr><tr></tr><tr></tr><tr></tr>
+				
+			<tr>
+				<td>
+					<button type="button" class="larger-button" onclick="newLectureScoreInput()">수정</button>
+				</td>
+			</tr>
+		</table>
+		
+	</form>
+
+
+
+<script>
+	
+	function newLectureScoreInput() {
+		
+		const radioButtons = document.getElementsByName('e');
+		
+		var newLecture_review_score;
+		
+		for (let i = 0; i < radioButtons.length; i++) {
+		    if (radioButtons[i].checked) {
+		    	newLecture_review_score = radioButtons[i].value;
+		        break;
+		    }
+		}
+		
+		window.opener.updateLectureScore(newLecture_review_score);
+		window.close();
+	}
+	
+	
+</script>
+
+
+</body>
+</html>

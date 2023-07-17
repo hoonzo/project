@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>부적절한 강의 신고</title>
+
+<style>
+    .larger-button {
+        width: 200px;
+        height: 50px;
+        background-color: silver;
+    }
+	
+	#selfInput {
+   		width: 500px; 
+   		height: 30px;
+  	}
+  	
+  	#complain_reason {
+   		height: 30px;
+  	}
+
+</style>   
+    
+</head>
+
+<body onload="onloadCheck()">
+		<br><br>
+	<h1 align="center">부적절한 강의 신고</h1>
+		<br><br>
+	<hr>
+	
+	<form action="complainLectureProc" method="post" align="center" onsubmit="return validateForm()">
+
+		<h3>신고 사유는 무엇인가요?</h3>
+			<hr>
+			<br>
+		<select id="complain_reason" name="complain_reason" onchange="complain_reasonChange(this)">
+		
+			<option value="" selected hidden>신고 사유을 선택하세요</option>
+			
+			<option value="title">부적절한 강의 제목</option>
+			<option value="introduce">부적절한 강의 소개</option>
+			<option value="dontLikeIt">맘에 안듦</option>
+			<option value="lifeIsHard">그냥 인생이 짜증남</option>
+			<option value="wantToBreak">오늘은 때려부수고 싶은 날이라서</option>
+			<option value="selfInput">직접 입력</option>
+			
+		</select>
+		
+			<br><br>
+		<div id="selfInputContainer" style="display: none;">
+		  	<input type="text" id="selfInput" name="selfInput">
+		</div>
+			<br><br><br><br>
+		
+		<hr>
+		<h3>신고 내용을 간략히 입력해주세요.</h3>
+			<hr>
+		    <br> 
+	    <input type="text" name="complain_content" id="complain_content" style="width: 600px; height:150px">
+		
+			<br><br><br><br>
+			
+		<input type="hidden" id="lectureNumInput" name="lecture_num">	
+		<button class="larger-button" type="submit">입력</button>
+
+	</form>
+	
+	<div id="checkPasswordMsg" style="display : none;">X</div>
+	<div id="lecture_num" th:text="${lecture_num}" style="display : none;">X</div>
+
+<script>
+
+function onloadCheck() {
+	var lecture_num = document.getElementById("lecture_num").textContent;
+	document.getElementById("lectureNumInput").value = lecture_num;
+}
+	
+	
+	function complain_reasonChange(selectElement) {
+	    var selfInputContainer = document.getElementById("selfInputContainer");
+	    var selfInput = document.getElementById("selfInput");
+	    
+	    if (selectElement.value === "selfInput") {
+	      selfInputContainer.style.display = "block";
+	      selfInput.required = true;
+	      
+	    } else {
+	      selfInputContainer.style.display = "none";
+	      selfInput.required = false;
+	    }
+	}
+
+	function validateForm() {
+
+		var complainReason = document.getElementById("complain_reason");
+	    var complainContent = document.getElementById("complain_content");
+	    
+		// var checkPasswordMsg = document.getElementById("checkPasswordMsg").textContent;
+		
+			if (complainReason.value === "") {
+				alert("신고 사유를 선택해주세요.");
+				return false;
+			}
+	
+			if (complainContent.value === "") {
+				alert("신고 내용을 입력해주세요.");
+				return false;
+			}
+
+		alert("신고 내용이 접수되었습니다.");
+		return true;
+	}
+	
+	
+	
+</script>
+
+</body>
+</html>

@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>리뷰 작성</title>
+
+<style>
+	.larger-button {
+		width: 200px;
+		height: 50px;
+		background-color: silver;
+		text-align: center;
+	}
+	
+	table {
+        margin: 0 auto;
+        border-collapse: separate;
+        border-spacing: 30px; /* 원하는 간격 값으로 조정 */
+        text-align: center;
+    }
+    
+    th {
+        font-size: 1.2em;
+        text-align: center;
+    }
+    
+    h2 {
+    	font-size: 1.8em;
+    	text-align: center;
+    }
+    
+    #rentalDateView {
+	  color: red;
+	  font-size: 18px;
+	}
+   
+   
+</style>
+
+
+</head>
+<body onload="reviewCheck()">
+	
+	<h2 align="center">리뷰 작성</h2>
+	
+	<form action="userReviewWriteProc" method="post" onsubmit="return validateForm()">
+		
+		<table align="center">
+			
+			
+			<tr id="reviewWriteCheckView" style="display: none;">
+				<th style="font-size: 25px; color: #FFAAAA;">리뷰를 작성한 유저입니다.</th>
+			</tr>
+			
+		
+		
+			<tbody id="writeView" style="display: none;">
+				
+                <tr>
+                    <th><br>해당 수강생의 후기를 작성해주세요</th>
+                </tr>
+                
+                 <tr>
+                	<td>
+                		<input type="text" name="userReivew_content" id="userReivew_content" placeholder="후기를 작성해주세요."
+                			 style="width: 600px; height:100px">
+                	</td>
+                </tr>
+                
+                <tr>
+                    <th><br>해당 수강생의 점수를 입력해주세요.</th>
+                </tr>
+                
+                <tr>
+                	<td>1 2 3 4 5</td>
+                </tr>
+                
+                <tr>
+                	<td>
+                		<input type="radio" name="user_review_score" value="1">
+                		<input type="radio" name="user_review_score" value="2">
+                		<input type="radio" name="user_review_score" value="3">
+                		<input type="radio" name="user_review_score" value="4">
+                		<input type="radio" name="user_review_score" value="5">
+                	</td>
+                </tr>
+                
+                <tr>
+                	
+                	<td id="reviewWriteCheckSign" th:text="${reviewWriteCheckSign}" style="display: none;"></td>
+                </tr>
+                
+                <tr>
+                	<td>
+                		<input type="hidden" th:value="${username}" name="username">
+                		<input type="hidden" th:value="${lecture_num}" name="lecture_num">
+                		
+                		<button class="larger-button">입력</button>
+                	</td>
+                </tr>
+                
+			</tbody>
+		</table>
+	</form>
+	
+<script>
+
+	function reviewCheck() {
+		var reviewWriteCheckSign = document.getElementById("reviewWriteCheckSign").textContent;
+		
+		var reviewWriteCheckView = document.getElementById("reviewWriteCheckView");
+		var writeView = document.getElementById("writeView");
+		
+		if(reviewWriteCheckSign === 'X') {
+			writeView.style.display = "";
+			
+		} else {
+			reviewWriteCheckView.style.display = "";
+		}
+		
+	}
+
+	function validateForm() {
+		var userReivew_content = document.getElementById("userReivew_content");
+		var reviewWriteCheckSign = document.getElementById("reviewWriteCheckSign").textContent;
+		
+		const user_review_score = document.querySelectorAll('input[name="user_review_score"]');
+		var isAnySelected = false;
+		
+		user_review_score.forEach(function(user_review_score) {
+			if(user_review_score.checked) {
+				isAnySelected = true;
+			}
+		});
+		
+		if(!userReivew_content.value) {
+			alert("리뷰 내용을 작성해주십시오.");
+			return false;
+		}
+		
+		if(!isAnySelected) {
+			alert("수강생의 점수를 입력해주세요.");
+			return false;
+		}
+		
+		alert("정상적으로 리뷰를 작성했습니다.");
+		return true;
+	}
+
+
+
+
+</script>
+	
+</body>
+</html>

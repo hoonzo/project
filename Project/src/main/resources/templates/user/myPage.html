@@ -1,36 +1,54 @@
 <!DOCTYPE html>
 <html>
 <head>
+
+<style>
+    .larger-button {
+        width: 200px;
+        height: 50px;
+        background-color: silver;
+    }	
+</style>
+
 <meta charset="UTF-8">
 <title>마이페이지</title>
 </head>
 
 <body>
-	<h2>마이페이지</h2>
-	
-	<form action="myPageUpdate" method="post">
-		<button>정보 수정</button>	
-	</form>
-	
-	<form action="lectureOrderList" method="get">
-		<button>수강 내역</button>	
-	</form>
-	
-	<form action="myReviewList" method="get">
-		<button>리뷰 작성 내역</button>	
-	</form>
-	
-	<form action="tokenOrderList" method="post">
-		<button>토큰 구매 내역</button>	
-	</form>
-		
-	<form action="cartList" method="post">
-		<button>카트</button>	
-	</form>
 
-	<form action="qnaList" method="post">
-		<button>문의 내역</button>	
+	<br>
+	<h2 align="center">마이페이지</h2>
+	
+	<br><br>
+	<form action="myPageUpdate" method="post" align="center">
+		<button class="larger-button">정보 수정</button>
 	</form>
+	
+	<br><br>
+	<form action="lectureOrderList" method="get" align="center">
+		<button class="larger-button">수강 내역</button>
+	</form>
+	
+	<br><br>
+	<form action="myReviewList" method="get" align="center">
+		<button class="larger-button">리뷰 작성 내역</button>
+	</form>
+	
+	<br><br>
+	<form action="reviewAboutMe" method="get" align="center">
+		<button class="larger-button">내게 작성된 리뷰 열람</button>
+	</form>
+	
+	<br><br>
+	<form action="tokenOrderList" method="get" align="center">
+		<button class="larger-button">토큰 구매 내역</button>
+	</form>
+	
+	<br><br>
+	<form action="myComplainList" method="get" align="center">
+		<button class="larger-button">컴플레인 내역</button>
+	</form>
+	
 	
 	<div id="msg" th:text="${msg}" style="display: none;"></div>
 	

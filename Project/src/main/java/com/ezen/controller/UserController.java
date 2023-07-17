@@ -1,6 +1,6 @@
 package com.ezen.controller;
 
-import java.sql.Timestamp;   
+import java.sql.Timestamp;    
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;  
@@ -19,18 +19,22 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.ezen.Service.ComplainLectureService;
 import com.ezen.Service.LectorsService;
 import com.ezen.Service.LectureOrderService;
 import com.ezen.Service.LectureService;
 import com.ezen.Service.RechargeService;
 import com.ezen.Service.ReviewService;
+import com.ezen.Service.UserReviewService;
 import com.ezen.Service.UserService;
+import com.ezen.model.ComplainLecture;
 import com.ezen.model.Lecture;
 import com.ezen.model.LectureOrder;
 import com.ezen.model.Recharge;
 import com.ezen.model.RechargeDTO;
 import com.ezen.model.Users;
 import com.ezen.model.Review;
+import com.ezen.model.UserReview;
 
 @Controller
 public class UserController {
@@ -56,8 +60,14 @@ public class UserController {
     @Autowired
     ReviewService reviewService;
     
+    @Autowired
+    UserReviewService userReviewService;
     
-
+    @Autowired
+    ComplainLectureService complainLectureService;
+    
+    
+    
     
     @GetMapping("/checkTerms")
     public String checkTerms() {
@@ -104,6 +114,8 @@ public class UserController {
     
     @GetMapping("/loginSuccess")
     public String loginSuccess(Model model) {
+    	
+    	userService.deleteUser(); // 날짜에 해당하는 유저가 있을 경우, 자동 삭제 처리
     	
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
@@ -153,16 +165,24 @@ public class UserController {
     	return "/user/myPage";  // 단순 이동 경로 설정
     }
     
-    @PostMapping("/tokenOrderList")
-    public String tokenOrderList(Model model) {
+    @GetMapping("/tokenOrderList")
+    public String tokenOrderList(Model model, Pageable pageable) {
     	
     	Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
     	String username = authentication.getName();
     	
     	int user_id = userService.getFindIdByUsername(username);
-    	List<Recharge> tokenOrderList = rechargeService.getTokenOrderList(user_id);
+
+    	Page<Recharge> myTokenOrderList = rechargeService.findMyRechargeList(pageable, user_id);
     	
-    	model.addAttribute("tokenOrderList", tokenOrderList);
+    	int nowPage = myTokenOrderList.getPageable().getPageNumber() + 1;
+		int startPage = Math.max(nowPage - 4, 1);
+		int endPage = Math.min(nowPage + 5, myTokenOrderList.getTotalPages());
+		
+		model.addAttribute("nowPage", nowPage);
+		model.addAttribute("startPage", startPage);
+		model.addAttribute("endPage", endPage);
+    	model.addAttribute("myTokenOrderList", myTokenOrderList);
     	
 		return "/user/tokenOrderList";
     }
@@ -174,8 +194,21 @@ public class UserController {
     	Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
     	String username = authentication.getName();
     	
+    		int deleteApplicationUserCheck = userService.deleteApplicationCheck(username);
+    			
+    			String deleteApplicationUserMsg = "";
+    		
+	    			if(deleteApplicationUserCheck > 0) {
+	    				deleteApplicationUserMsg = "O";
+	    				
+	    			} else {
+	    				deleteApplicationUserMsg = "X";
+	    			}
+    	
     	List<Users> userList = userService.getUserlist(username);
+    	
     	model.addAttribute("userList", userList);
+    	model.addAttribute("deleteApplicationUserMsg", deleteApplicationUserMsg);
     	
     	return "/user/myPageUpdate";
     }
@@ -197,30 +230,36 @@ public class UserController {
     	String pass = userService.getUserpassword(username);
     	
     	boolean check = bCryptPasswordEncoder.matches(oldPassword, pass);
-    	boolean sameCheck = bCryptPasswordEncoder.matches(newPassword, pass);
     	
     	String msg = "";
     	
-    	if(check == true) { // 비밀번호가 일치할 경우 정상 작동
-    		
-    		// 비밀번호 암호화
-            String encPassword = bCryptPasswordEncoder.encode(newPassword);
-            userService.getUpdatePassword(username, encPassword);	
-   
-    		msg = "비밀번호가 정상적으로 수정되었습니다.";
-    		model.addAttribute("msg", msg);
-    		return "/user/myPage";
-    		
-    	} else if(sameCheck == true) { // 기존에 사용하던 비밀번호와 새로 사용할 비밀번호가 일치할 경우
-    		msg = "기존에 사용하던 비밀번호는 사용하실 수 없습니다.";
-    		model.addAttribute("msg", msg);
-    		return "/user/passwordUpdate";
-    		
-    	} else { // 비밀번호가 일치하지않을 경우
-    		msg = "비밀번호가 일치하지않습니다. 다시 확인해주십시오.";    
-    		model.addAttribute("msg", msg);
-    		return "/user/passwordUpdate";
-    	}
+	    	if(check == true) { // 비밀번호가 일치할 경우 정상 작동
+	    		
+		    		if(oldPassword.equals(newPassword)) {
+		    			
+		    			msg = "기존에 사용하던 비밀번호는 사용하실 수 없습니다.";
+		        		model.addAttribute("msg", msg);
+		        		
+		        		return "/user/passwordUpdate";
+		        		
+		    		} else {
+		    			
+		    			// 비밀번호 암호화
+		                String encPassword = bCryptPasswordEncoder.encode(newPassword);
+		                userService.getUpdatePassword(username, encPassword);	
+		       
+		        		msg = "비밀번호가 정상적으로 수정되었습니다.";
+		        		model.addAttribute("msg", msg);
+		        		
+		        		return "/user/myPage";
+		    			
+		    		}
+	    		
+	    	} else { // 비밀번호가 일치하지않을 경우
+	    		msg = "비밀번호가 일치하지않습니다. 다시 확인해주십시오.";    
+	    		model.addAttribute("msg", msg);
+	    		return "/user/passwordUpdate";
+	    	}
     }
     
     
@@ -247,9 +286,15 @@ public class UserController {
     	// 토큰 갯수 합산
     	double afterToken = beforeToken + dto.getPay();
     	
+    	// changeWon 넣어주기
+    	recharge.ChangeWon();
+    	
     	rechargeService.getRechargeOrderSave(recharge);
     	userService.getUpdateToken(username, afterToken);
     	
+    	String role = userService.getFindRoleByUsername(username);
+    	
+    	model.addAttribute("role", role);
     	model.addAttribute("username", username);
     	
     	return "/user/loginSuccess";
@@ -445,36 +490,49 @@ public class UserController {
 		
 		String user_num = lectureService.findUser_numByLecture_num(lecture.getLecture_num());
 		
-		if(user_num == null) {
-			List<Lecture> lectureDetailList = lectureService.getFindLectureListByLecture_num(lecture.getLecture_num());
-			double review_score = lectorsService.findReview_scoreByLector_num(lecture.getLector_num());
+			String complainCheckMsg = "X";
+				
+				int complainCheck 
+					= complainLectureService.findMyComplainByUser_idAndLecture_num(user_id, lecture.getLecture_num());
 			
-			model.addAttribute("myToken", myToken);
-			model.addAttribute("lectureDetailList", lectureDetailList);
-			model.addAttribute("review_score", review_score);
-			model.addAttribute("remainder", maxPersonnel);
+					if(complainCheck > 0) {
+						complainCheckMsg = "O";
+					}
 			
-			return "/user/lectureDetail";
 			
-		} else {
-			String[] userNumArray = user_num.split(",");
-	    	int ReservationPersonnel = userNumArray.length; // 현재 예약된 인원 수
-	    	
-			int remainder = maxPersonnel - ReservationPersonnel; // 잔여 수강 가능 수
-			
-			List<Lecture> lectureDetailList = lectureService.getFindLectureListByLecture_num(lecture.getLecture_num());
-			double review_score = lectorsService.findReview_scoreByLector_num(lecture.getLector_num());
-			
-			model.addAttribute("myToken", myToken);
-			model.addAttribute("lectureDetailList", lectureDetailList);
-			model.addAttribute("review_score", review_score);
-			model.addAttribute("remainder", remainder);
-			
-			model.addAttribute("user_id", user_id);
-			model.addAttribute("userNumArray", userNumArray);
-			
-			return "/user/lectureDetail";
-		}
+			if(user_num == null) {
+				List<Lecture> lectureDetailList = lectureService.getFindLectureListByLecture_num(lecture.getLecture_num());
+				double review_score = lectorsService.findReview_scoreByLector_num(lecture.getLector_num());
+				
+				model.addAttribute("myToken", myToken);
+				model.addAttribute("lectureDetailList", lectureDetailList);
+				model.addAttribute("review_score", review_score);
+				model.addAttribute("remainder", maxPersonnel);
+				model.addAttribute("complainCheckMsg", complainCheckMsg);
+				
+				return "/user/lectureDetail";
+				
+			} else {
+				String[] userNumArray = user_num.split(",");
+		    	int ReservationPersonnel = userNumArray.length; // 현재 예약된 인원 수
+		    	
+				int remainder = maxPersonnel - ReservationPersonnel; // 잔여 수강 가능 수
+				
+				List<Lecture> lectureDetailList = lectureService.getFindLectureListByLecture_num(lecture.getLecture_num());
+				double review_score = lectorsService.findReview_scoreByLector_num(lecture.getLector_num());
+				
+				model.addAttribute("myToken", myToken);
+				model.addAttribute("lectureDetailList", lectureDetailList);
+				model.addAttribute("review_score", review_score);
+				model.addAttribute("remainder", remainder);
+				
+				model.addAttribute("user_id", user_id);
+				model.addAttribute("userNumArray", userNumArray);
+				
+				model.addAttribute("complainCheckMsg", complainCheckMsg);
+				
+				return "/user/lectureDetail";
+			}
 	}
 	
 	@GetMapping("/lectorReview")
@@ -727,6 +785,8 @@ public class UserController {
 		return "/user/lectureOrderDetailView";
 	}
 	
+	
+	
 	@GetMapping("/cancelLecture")
 	public String cancelLecture(Lecture lecture, LectureOrder lectureOrder) {
 		// Lecture lecture에 lecture_num, price 가져옴
@@ -755,8 +815,6 @@ public class UserController {
     		for(String num : userNumArray) {
     			 if (!num.equals(user_id_str)) {
     				 newArray.add(num);
-    				 break;
-    				 
     			 }
     		}
     		
@@ -1013,7 +1071,7 @@ public class UserController {
 		
 		// review_num으로 이전 데이터를 가져와서 수정된 값이 있는지 비교
 		Review old_review = reviewService.findReviewByReivew_num(review.getReivew_num());
-		
+	
 		// 강의 점수를 수정했을 경우,
 		if(old_review.getLecture_review_score() != review.getLecture_review_score()) {
 			
@@ -1023,6 +1081,15 @@ public class UserController {
 			double new_all_review_score = old_all_review_score - old_review.getLecture_review_score() 
 															+ review.getLecture_review_score();
 			lectureService.all_review_scoreUpdateByLecture_num(new_all_review_score, review.getLecture_num());
+			
+			// review_score도 업데이트 해줘야함.
+			String lecture_user_nums = lectureService.findUser_numByLecture_num(review.getLecture_num());
+			String[] lecture_userNumArray = lecture_user_nums.split(",");
+			
+			double new_review_score = new_all_review_score / lecture_userNumArray.length;
+			
+			// review_score 저장
+			lectureService.updateReview_scoreByLecture_num(new_review_score, review.getLecture_num());
 			
 			// 리뷰 업데이트 위한 객체 저장
 			old_review.setLecture_review_score(review.getLecture_review_score());
@@ -1037,19 +1104,354 @@ public class UserController {
 															+ review.getLector_review_score();
 			lectorsService.all_review_scoreUpdateByLector_num(new_all_review_score, review.getLector_num());
 			
+			String lector_user_nums = lectorsService.findRevieWriteCheckByLector_num(review.getLector_num());
+			String [] lector_userNumArray = lector_user_nums.split(",");
+			
+			double lector_new_review_score = new_all_review_score / lector_userNumArray.length;
+			
+			lectorsService.updateReview_scoreByLector_num(lector_new_review_score, review.getLector_num());
+			
 			old_review.setLector_review_score(review.getLector_review_score());
 		}
 		
 		old_review.setReview_content(review.getReview_content());
+		// 업데이트 가능 횟수 추가
+		old_review.setUpdate_times(review.getUpdate_times() + 1);
 		
+		// 업데이트
 		reviewService.getSave(old_review);
 		
 		return "redirect:/myReviewList";
+	}
+	
+	@GetMapping("/reviewDelete")
+	public String reviewDelete(@RequestParam("beforeDeleteCheckDate")String beforeDeleteCheckDate,
+								Review review) {
+		
+		Review myReview = reviewService.findReviewByReivew_num(review.getReivew_num());
+		
+		if(beforeDeleteCheckDate.equals("X")) {
+			
+			System.out.println("            X 실행          ");
+	
+		///////// lecture //////////
+			// lecture, lector review_score 수정 필요
+			// lecture의 all_review_score에서  기존 점수를 빼고 새로 입력한 점수를 저장.
+				double old_all_review_score = lectureService.findAll_review_scoreByLecture_num(myReview.getLecture_num());
+				
+				double new_all_review_score = old_all_review_score - myReview.getLecture_review_score();
+				
+			// all_review_score 저장
+			lectureService.all_review_scoreUpdateByLecture_num(new_all_review_score, myReview.getLecture_num());
+			
+				// review_score도 업데이트 해줘야함.
+				String lecture_user_nums = lectureService.findReviewWriteCheckByLecture_num(myReview.getLecture_num());
+				String[] lecture_userNumArray = lecture_user_nums.split(",");
+				
+					ArrayList<String> newArray = new ArrayList<String>();
+					
+					String String_user_id = Integer.toString(myReview.getUser_id());
+				
+						for(String str : lecture_userNumArray) {
+							
+							if(!str.equals(String_user_id)) {
+								newArray.add(str);
+							}
+							
+						}
+				
+							String[] newUser_numArray = newArray.toArray(new String[0]);
+							String newUser_num = String.join(",", newUser_numArray);
+							
+			// user_num 저장
+			lectureService.updateReviewWriteCheckByUser_id(newUser_num, myReview.getLecture_num());
+			
+				// lecture_userNumArray.length가 0일 경우 예외 처리 추가해야함.
+				double maxCheck = Math.max(lecture_userNumArray.length - 1, 1);
+				
+				double new_review_score = new_all_review_score / maxCheck;
+				
+			
+			// review_score 저장
+			lectureService.updateReview_scoreByLecture_num(new_review_score, myReview.getLecture_num());
+			
+			
+		///////// lector //////////
+				double lector_old_all_review_score = lectorsService.findAll_review_scoreByLector_num(myReview.getLector_num());
+				
+				double lector_new_all_review_score = lector_old_all_review_score - myReview.getLector_review_score();
+			
+			lectorsService.all_review_scoreUpdateByLector_num(lector_new_all_review_score, myReview.getLector_num());
+			
+		
+				String lector_user_nums = lectorsService.findRevieWriteCheckByLector_num(myReview.getLector_num());
+				String [] lector_userNumArray = lector_user_nums.split(",");
+			
+					ArrayList<String> lector_newArray = new ArrayList<String>();
+					
+					String lector_String_user_id = Integer.toString(myReview.getUser_id());
+				
+						for(String str : lector_userNumArray) {
+							
+							if(!str.equals(lector_String_user_id)) {
+								lector_newArray.add(str);
+							}
+							
+						}
+				
+							String[] lector_newUser_numArray = lector_newArray.toArray(new String[0]);
+							String lector_newUser_num = String.join(",", lector_newUser_numArray);
+						
+			lectorsService.updateReviewWriteCheckByUser_id(lector_newUser_num, myReview.getLector_num());
+							
+	
+				double lector_maxCheck = Math.max(lector_userNumArray.length - 1, 1);
+				
+				double lector_new_review_score = lector_new_all_review_score / lector_maxCheck;
+			
+			lectorsService.updateReview_scoreByLector_num(lector_new_review_score, myReview.getLector_num());
+				
+			// 리뷰 삭제
+			reviewService.hide_review(review.getReivew_num());
+			
+		// beforeDeleteCheckDate == O이면, 리뷰에 반영 X
+		} else {
+			reviewService.hide_review(review.getReivew_num());
+			
+		}
+		
+		return "redirect:/myReviewList";
+	}
+	
+	@GetMapping("/reviewAboutMe")
+	public String reviewAboutMe(Pageable pageable, Model model) {
+		
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+    	String username = authentication.getName();
+    	
+    	int user_id = userService.getFindIdByUsername(username);
+    	
+    	Page<UserReview> reviewAboutMePageList = userReviewService.getReviewPageListByUser_id(pageable, user_id);	
+    	
+    			String nullCheckMessage = "";
+    			
+	    			if(reviewAboutMePageList.isEmpty()) {
+	    				nullCheckMessage = "O";
+	    				
+	    			} else {
+	    				nullCheckMessage = "X";
+	    			}
+    	
+		    	int nowPage = reviewAboutMePageList.getPageable().getPageNumber() + 1;
+				int startPage = Math.max(nowPage - 4, 1);
+				int endPage = Math.min(nowPage + 5, reviewAboutMePageList.getTotalPages());
+		
+		model.addAttribute("reviewAboutMePageList", reviewAboutMePageList);
+		
+		model.addAttribute("nowPage", nowPage);
+		model.addAttribute("startPage", startPage);
+		model.addAttribute("endPage", endPage);
+		
+		model.addAttribute("nullCheckMessage", nullCheckMessage);
+		
+		return "/user/reviewAboutMe";
+	}
+	
+	
+	@GetMapping("/deleteUser")
+	public String deleteUser() {
+		return "/user/passwordCheckBeforeDelete";
+	}
+	
+	@PostMapping("/passwordCheckBeforeDeleteProc")
+	public String passwordCheckBeforeDeleteProc(@RequestParam("password")String password, Model model) {
+		
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+    	String username = authentication.getName();
+    	
+	    	String pass = userService.getUserpassword(username);
+			
+		    	boolean check = bCryptPasswordEncoder.matches(password, pass);
+		    	
+		    	String msg = "";
+		    	
+			    	if(check == true) { // 비밀번호가 일치할 경우 정상 작동
+			    		
+			    		// 탈퇴 처리 로직 추가
+			    		userService.dateApplicationForDeleteInsert(username);
+			    		
+			    		msg = "탈퇴 신청이 처리되었습니다. \n실제 탈퇴는 일주일 이후에 처리되며, 일주일 이내에 취소가 가능합니다.";
+			    		model.addAttribute("msg", msg);
+			    		
+			    		return "/user/myPage";
+			    		
+			    	} else { // 비밀번호가 일치하지않을 경우
+			    		msg = "비밀번호가 일치하지않습니다. 다시 확인해주십시오.";    
+			    		model.addAttribute("msg", msg);
+			    		
+			    		return "/user/passwordCheckBeforeDelete";
+			    	}
+	}
+	
+	@GetMapping("/deleteUserCancel")
+	public String deleteUserCancel() {
+		return "/user/passwordCheckBeforeDeleteCancel";
+	}
+	
+	@PostMapping("/passwordCheckBeforeDeleteCancelProc")
+	public String passwordCheckBeforeDeleteCancelProc(@RequestParam("password")String password, Model model) {
+		
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+    	String username = authentication.getName();
+    	
+	    	String pass = userService.getUserpassword(username);
+			
+		    	boolean check = bCryptPasswordEncoder.matches(password, pass);
+		    	
+		    	String msg = "";
+		    	
+			    	if(check == true) { // 비밀번호가 일치할 경우 정상 작동
+			    		
+			    		// 탈퇴 처리 로직 추가
+			    		userService.deleteApplicationCancel(username);
+			    		
+			    		msg = "탈퇴 신청이 취소되었습니다.";
+			    		model.addAttribute("msg", msg);
+			    		
+			    		return "/user/myPage";
+			    		
+			    	} else { // 비밀번호가 일치하지않을 경우
+			    		msg = "비밀번호가 일치하지않습니다. 다시 확인해주십시오.";    
+			    		model.addAttribute("msg", msg);
+			    		
+			    		return "/user/passwordCheckBeforeDeleteCancel";
+			    	}
+	}
+	
+	
+	@GetMapping("/complainLeture")
+	public String complainLeture(Lecture lecture, Model model) {
+		
+		model.addAttribute("lecture_num", lecture.getLecture_num());
+		
+		return "/user/complainLeture";
+	}
+	
+	@PostMapping("/complainLectureProc")
+	public String complainLectureProc(@RequestParam("selfInput")String selfInput,
+										ComplainLecture cl, Model model) {
+		
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+    	String username = authentication.getName();
+    	
+	    	int user_id = userService.getFindIdByUsername(username);
+			
+				if(cl.getComplain_reason().equals("selfInput")) {
+					cl.setComplain_reason(selfInput);
+				}
+		
+			cl.setUser_id(user_id);
+		
+		// 신고 횟수 증가
+		int complainCount = lectureService.findComplainCountByLecture_num(cl.getLecture_num());
+		lectureService.updateComplainCountByLecture_num(complainCount + 1, cl.getLecture_num());
+		
+		// 컴플레인 저장
+		complainLectureService.getSave(cl);
+		
+		return "redirect:/lectureListView";
+	}
+	
+	@GetMapping("/myComplainList")
+	public String myComplainList(Pageable pageable, Model model) {
+		
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+    	String username = authentication.getName();
+    	
+	    	int user_id = userService.getFindIdByUsername(username);
+	    	
+		    	Page<ComplainLecture> allComplainPageList = 
+		    			complainLectureService.findComplainPageListByUser_id(pageable, user_id);
+		    	
+			 	int nowPage = allComplainPageList.getPageable().getPageNumber() + 1;
+				int startPage = Math.max(nowPage - 4, 1);
+				int endPage = Math.min(nowPage + 4, allComplainPageList.getTotalPages());
+				
+					model.addAttribute("nowPage", nowPage);
+					model.addAttribute("startPage", startPage);
+					model.addAttribute("endPage", endPage);
+			        model.addAttribute("allComplainPageList", allComplainPageList);
+	    	
+		return "/user/myComplainList";
+	}
+	
+	@GetMapping("/myUnresolvedComplain")
+	public String unresolvedComplain(Pageable pageable, Model model) {
+		
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+    	String username = authentication.getName();
+    	
+	    	int user_id = userService.getFindIdByUsername(username);
+		
+			Page<ComplainLecture> unresolvedComplainPageList = 
+					complainLectureService.findUnresolvedComplainPageListByUser_id(pageable, user_id);
+			
+				 	int nowPage = unresolvedComplainPageList.getPageable().getPageNumber() + 1;
+					int startPage = Math.max(nowPage - 4, 1);
+					int endPage = Math.min(nowPage + 4, unresolvedComplainPageList.getTotalPages());
+					
+					model.addAttribute("nowPage", nowPage);
+					model.addAttribute("startPage", startPage);
+					model.addAttribute("endPage", endPage);
+			        model.addAttribute("allComplainPageList", unresolvedComplainPageList);
+	        
+		return "/user/myUnresolvedComplain";
+	}
+	
+	@GetMapping("/myResolvedComplain")
+	public String resolvedComplain(Pageable pageable, Model model) {
+		
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+    	String username = authentication.getName();
+    	
+	    	int user_id = userService.getFindIdByUsername(username);
+		
+			Page<ComplainLecture> resolvedComplainPageList 
+				= complainLectureService.findResolvedComplainPageListByUser_id(pageable, user_id);
+			
+				 	int nowPage = resolvedComplainPageList.getPageable().getPageNumber() + 1;
+					int startPage = Math.max(nowPage - 4, 1);
+					int endPage = Math.min(nowPage + 4, resolvedComplainPageList.getTotalPages());
+					
+					model.addAttribute("nowPage", nowPage);
+					model.addAttribute("startPage", startPage);
+					model.addAttribute("endPage", endPage);
+			        model.addAttribute("allComplainPageList", resolvedComplainPageList);
+	        
+		return "/user/myResolvedComplain";
+	}
+	
+	@GetMapping("/myComplainDetail")
+	public String myComplainDetail(ComplainLecture cl, Model model) {
+		// complainLeture_num
+		
+		System.out.println("                                               " + cl.toString());
+		
+		List<ComplainLecture> complainDetailList = 
+			complainLectureService.complainDetailListByComplainLeture_num(cl.getComplainLeture_num());
+		
+				int lector_num = lectureService.findLector_numByLecture_num(cl.getLecture_num());
+		
+		model.addAttribute("complainDetailList", complainDetailList);
+		model.addAttribute("lector_num", lector_num);
+		
+		return "/user/myComplainDetail";
 	}
 	
 	
 	
 	
 	
+		
 	
 }

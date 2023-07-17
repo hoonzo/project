@@ -1,37 +1,276 @@
 <!DOCTYPE html>
-<html xmlns="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
+
+<style>
+    .larger-button {
+        width: 200px;
+        height: 50px;
+        background-color: silver;
+    }	
+</style>
+
 <meta charset="UTF-8">
-<title>토큰 교환</title>
+<title>토큰 충전</title>
 </head>
-<body>
+<body onload="onload()">
 	
+	<br><br>
+	<h2 align="center">토큰 환전</h2>
+	<br><hr><br>
 	
-	
-	
-	<form action="exchangeTokenProc" methd="post">
-		<table>
-			<tr>
-				<td>
-					환전 가능한 토큰 갯수 : 
-				</td>
-				
-				<td>
-					<div id="endPage" th:text="${token}" style=""></div>
-				</td>
+	<form action="exchangeTokenProc" method="post" onsubmit="return validateForm()" align="center">
+		
+		<table align="center">
+			
+			<tr id="membershipMessage" style= "display : none; color: #FF8888; font-size: 25px;">
+				<th>멤버쉽 혜택! 환전 시 수수료 감면!<br><br></th>
 			</tr>
 			
 			<tr>
-				<td>
-					<input type="number" min="0" max="20" th:place="${token}">
-				</td>
+				<th  th:text="${'보유 토큰  ' + myToken + '개'}" style= "font-size: 20px;"></th>
 			</tr>
-		
-		
+			
+			<tr >
+				<th><br>토큰 환전은 최소 10개부터 가능합니다.</th>
+			</tr>
+			
 		</table>
-	
+		
+		<br><br><br>
+		
+		
+		<p style="font-size: 20px;">환전 토큰 갯수</p>
+		
+		<input type="text" name="rechange_amount" id="pay" placeholder="환전하실 토큰의 갯수를 입력하세요." 
+					oninput="change(); clearResult();" style="width: 300px; height: 60px;">
+		<p id="commission"></p>		
+		<p id="result"></p>
+			
+		
+		<button type="button" onclick="plus1()" style="width: 40px; height: 30px;">1</button>
+		<button type="button" onclick="plus3()" style="width: 40px; height: 30px;">3</button>
+		<button type="button" onclick="plus5()" style="width: 40px; height: 30px;">5</button>
+		<button type="button" onclick="plus10()" style="width: 40px; height: 30px;">10</button>
+		
+		
+			<br><br><br><br>
+			<p style="font-size: 20px;">입금 계좌</p>
+		
+		<select name="bank" id="bank" style="height: 30px;">
+		    <option value="" selected hidden>은행</option>
+		    <option value="km" th:selected="${bankMessage == 'km'}">국민</option>
+		    <option value="kakao" th:selected="${bankMessage == 'kakao'}">카카오</option>
+		    <option value="toss" th:selected="${bankMessage == 'toss'}">토스</option>
+		    <option value="sinhan" th:selected="${bankMessage == 'sinhan'}">신한</option>
+		</select>
+		
+		<input type="text" name="account" id="account"
+			    th:placeholder="${accountMessage == 'X' ? '계좌번호를 입력하세요.' : accountMessage}" 
+			    style="width: 300px; height: 30px;">
+					
+					
+		<br><br><br><br>
+		<input type="submit" value="환전하기" class="larger-button">	
 	
 	</form>
+	
+	<div style="display: none;" th:text="${myToken}" id="myToken"></div>
+	<div style="display: none;" th:text="${checkMembership}" id="checkMembership"></div>
+	
+	<div style="display: none;" th:text="${bankMessage}" id="bankMessage"></div>
+	<div style="display: none;" th:text="${accountMessage}" id="accountMessage"></div>
+	
+<script>
+
+	function validateForm() {
+		var pay = document.getElementById("pay");
+		var bank = document.getElementById("bank");
+		var account = document.getElementById("account");
+		
+		var bankMessage = document.getElementById("bankMessage").textContent;
+		var accountMessage = document.getElementById("accountMessage").textContent;
+		
+		if(!pay.value) {
+			alert("환전하실 토큰을 입력해주세요.");
+			return false;
+		
+		} else if(pay.value < 10) {
+			alert("토큰의 최소 10개 이상부터 환전 가능합니다.");
+			return false;
+			
+		} 
+		
+		if(bank.value == "") {
+			
+			if(bankMessage != "X") {
+				bank.value = bankMessage;
+				
+			} else {
+				alert("환전하실 은행사를 선택해주세요.");
+				return false;
+			}
+		}
+		
+		if(!account.value) {
+			
+			if(accountMessage != "X") {
+				account.value = accountMessage;
+				
+			} else {
+				alert("환전하실 계좌 번호를 입력해주세요.");
+				return false;
+			}
+		}
+		
+		alert("정상적으로 환전되었습니다.")
+		return true;
+	}
+
+	function onload() {
+		
+		var membership = document.getElementById("checkMembership").textContent;
+		var checkMembership = parseInt(membership, 10);
+		
+		var membershipMessage = document.getElementById("membershipMessage");
+		
+		if(checkMembership > 0) {
+			membershipMessage.style.display = "";
+		}
+	}
+	
+	function change() {
+		
+		var token = document.getElementById("myToken").textContent;
+		var myToken = parseInt(token, 10);
+		
+		var membership = document.getElementById("checkMembership").textContent;
+		var checkMembership = parseInt(membership, 10);
+		
+		var pay = document.getElementById("pay").value;
+		var check = /^[0-9]+$/;
+		
+		if(!check.test(pay)) { // 문자열 입력 못하게
+			document.getElementById("pay").value = "";
+			return false;
+		
+		} else if(pay == 0) { // 최초 입력 숫자 0이 될 수 없게
+			document.getElementById("pay").value = "";
+			return false;	
+		
+		} else if(pay > myToken) {
+			
+			alert("현재 환급 가능한 최대 갯수는  " + myToken + "개 입니다")
+			
+			var numberWithCommas = parseFloat(pay).toLocaleString();
+			document.getElementById("pay").value = numberWithCommas;
+			
+				if(checkMembership > 0) { // 멤버쉽 유저일 경우, 
+					var commission = myToken * 10000 * 0.08;
+					
+				} else {
+					var commission = myToken * 10000 * 0.1;
+				}
+			
+			var result = myToken * 10000 - parseFloat(commission);
+			var commissionWithCommas = commission.toLocaleString();
+			var resultWithCommas = result.toLocaleString();
+			
+			document.getElementById("pay").value = myToken;
+		    document.getElementById("result").textContent = "환전 예상 금액 : " + resultWithCommas + "원";
+			
+			
+		} else {
+			
+			var numberWithCommas = parseFloat(pay).toLocaleString();
+			document.getElementById("pay").value = numberWithCommas;
+			
+				if(checkMembership > 0) { // 멤버쉽 유저일 경우,
+					
+					var commission = parseFloat(pay) * 10000 * 0.08;
+				
+				} else { 
+					
+					var commission = parseFloat(pay) * 10000 * 0.1;
+				}
+			
+			var result = parseFloat(pay) * 10000 - parseFloat(commission);
+			var commissionWithCommas = commission.toLocaleString();
+			var resultWithCommas = result.toLocaleString();
+			
+		    document.getElementById("result").textContent = "환전 예상 금액 : " + resultWithCommas + "원";
+		}
+	}
+	
+	function clearResult() {
+	    var pay = document.getElementById("pay").value;
+
+	    if (pay == "") {
+	        document.getElementById("result").textContent = "";
+	    }
+	}
+	
+	function plus1() { 
+		 var pay = document.getElementById("pay");
+		 var changeNum = parseFloat(pay.value);
+		 
+		 if(pay.value == "") {
+			 pay.value = 1;
+			 change();
+			 
+		 } else {
+			 pay.value = changeNum+1; 
+			 change();
+		 }
+	}
+	
+	function plus3() { 
+		 var pay = document.getElementById("pay");
+		 var changeNum = parseFloat(pay.value);
+		 
+		 if(pay.value == "") {
+			 pay.value = 3;
+			 change();
+			 
+		 } else {
+			 pay.value = changeNum+3; 
+			 change();
+		 }
+	}
+	
+	function plus5() { 
+		 var pay = document.getElementById("pay");
+		 var changeNum = parseFloat(pay.value);
+		 
+		 if(pay.value == "") {
+			 pay.value = 5;
+			 change();
+			 
+		 } else {
+			 pay.value = changeNum+5; 
+			 change();
+		 }
+	}
+	
+	function plus10() { 
+		 var pay = document.getElementById("pay");
+		 var changeNum = parseFloat(pay.value);
+		 
+		 if(pay.value == "") {
+			 pay.value = 10;
+			 change();
+			 
+		 } else {
+			 pay.value = changeNum+10; 
+			 change();
+		 }
+	}
+	
+	
+	
+	
+
+</script>	
 	
 	
 </body>

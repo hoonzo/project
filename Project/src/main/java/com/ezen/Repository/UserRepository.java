@@ -1,5 +1,6 @@
 package com.ezen.Repository;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.data.domain.Page;
@@ -78,10 +79,35 @@ public interface UserRepository extends JpaRepository<Users, Integer> {
     @Query("UPDATE Users u SET u.role = 'ROLE_LECTOR' WHERE u.id = :id")
     void changeRole(int id);
     
+    @Query("SELECT u FROM Users u WHERE u.id = :user_id")
+    Users findManner_scoreByUser_id(int user_id);
     
+    @Query("SELECT u.reviewWriteCheck FROM Users u WHERE u.username = :username")
+    String findReviewWriteCheckByUsername(String username);
     
+    @Query("SELECT u FROM Users u WHERE u.id = :user_id")
+    Users findUsersByUser_id(int user_id);
     
+    @Query("SELECT u.all_review_score FROM Users u WHERE u.id = :user_id")
+    double findAll_review_scoreByUser_id(int user_id);
     
+    @Query("SELECT u.manner_score FROM Users u WHERE u.id = :user_id")
+    double findManner_scoreByUserId(int user_id);
+    
+    @Query("SELECT u.username FROM Users u WHERE u.id = :user_id")
+    String findUsernameById(int user_id);
+    
+    @Modifying
+    @Query("UPDATE Users u SET u.all_review_score = :all_review_score WHERE u.id = :user_id")
+    void updateAll_review_scoreByUser_id(double all_review_score, int user_id);
+    
+    @Modifying
+    @Query("UPDATE Users u SET u.manner_score = :manner_score WHERE u.id = :user_id")
+    void updateManner_scoreByUser_id(double manner_score, int user_id);
+    
+    @Modifying
+    @Query("UPDATE Users u SET u.reviewWriteCheck = :reviewWriteCheck WHERE u.id = :user_id")
+    void updateReviewWriteCheckByUser_id(String reviewWriteCheck, int user_id);
     
     
 // 어드민 검색 기능     
@@ -113,11 +139,23 @@ public interface UserRepository extends JpaRepository<Users, Integer> {
     
     
     
+    @Modifying
+    @Query("UPDATE Users u SET u.dateApplicationForDelete = :aWeekLaterDate "
+    		+ "WHERE u.username = :username")
+    void dateApplicationForDeleteInsert(LocalDate aWeekLaterDate, String username);
     
+    @Query("SELECT count(*) FROM Users u WHERE u.username = :username "
+    		+ "AND u.dateApplicationForDelete IS NOT NULL")
+    int deleteApplicationCheck(String username);
     
+    @Modifying
+    @Query("UPDATE Users u SET u.dateApplicationForDelete = null "
+    		+ "WHERE u.username = :username")
+    void deleteApplicationCancel(String username);
     
-    
-    
+    @Modifying
+    @Query("DELETE FROM Users u WHERE u.dateApplicationForDelete = :nowDate")
+    void deleteUser(LocalDate nowDate);
     
     
     

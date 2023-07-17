@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>신고 확인</title>
+
+<style>
+    .larger-button {
+        width: 200px;
+        height: 50px;
+        background-color: silver;
+    }
+	
+	#selfInput {
+   		width: 500px; 
+   		height: 30px;
+  	}
+  	
+  	#complain_reason {
+   		height: 30px;
+  	}
+  	
+  	#rightWrongMsg {
+	    color: lightcoral;
+  	}
+
+</style>   
+    
+</head>
+
+<body onload="onloadCheck()">
+		<br><br>
+	<h1 align="center">컴플레인</h1>
+		<br><br>
+	<hr>
+
+	<table style="width: 100%; border-collapse: separate; border-spacing: 0 10px;">
+	
+		<tbody align="center" th:each="complain : ${complainDetailList}">
+			
+				<tr></tr><tr></tr><tr></tr><tr></tr>
+			
+			<tr>
+				<th>신고된 강의 번호</th>
+			</tr>
+			
+			<tr>	
+				<td>
+					<span th:text="${complain.lecture_num}"></span>
+				</td>
+			</tr>
+			
+			<tr>	
+				<td>
+					<button type="button" onclick="lectureDetail()">강의 확인</button>
+				</td>
+			</tr>
+			
+				<tr></tr><tr></tr><tr></tr><tr></tr>
+			
+			<tr>
+				<th>신고 사유</th>
+			</tr>
+			
+			<tr>
+				<td><span th:text="${complain.complain_reason}"></span></td>
+			</tr>
+			
+				<tr></tr><tr></tr><tr></tr><tr></tr>
+			
+			<tr>
+				<th>신고 내용</th>
+			</tr>
+			
+			<tr>
+				<td><span th:text="${complain.complain_content}"></span></td>
+			</tr>
+			
+				<tr></tr><tr></tr><tr></tr><tr></tr>
+				
+			<tr>
+				<th>관리자 답변</th>
+			</tr>
+			
+			<tr>
+				<td id="processingResult" th:text="${complain.processingResult}"> </td>
+			</tr>
+			
+				<tr></tr><tr></tr>
+				
+			
+			<tr>
+				<td>
+					<div style="display: none;" th:text="${complain.lecture_num}" id="lecture_num"></div>
+					<div style="display: none;" th:text="${lector_num}" id="lector_num"></div>
+				</td>
+			</tr>
+			
+			
+		</tbody>
+		
+	</table>
+
+
+
+	
+
+
+<script>
+	
+	function onloadCheck() {
+	    var processingResult = document.getElementById("processingResult").textContent;
+
+	    if (processingResult === "X") {
+	        document.getElementById("processingResult").innerText = 
+	        		"접수하신 내용에 대해 검토 중에 있습니다. 잠시만 기다려주시면 감사드리겠습니다.";
+	    }
+	}
+	
+	
+
+	function lectureDetail() {
+		
+		var width = 800;
+	    var height = 600;
+	    
+		    var lecture_num = document.getElementById("lecture_num").textContent;
+		    var lector_num = document.getElementById("lector_num").textContent;
+		    
+			    var popupOptions = 'width=' + width + ', height=' + height + ', resizable=yes, scrollbars=yes';
+			    var url = 'lectureDetail?lecture_num=' + lecture_num +
+			    			'&lector_num=' + lector_num;
+			
+			    	window.open(url, '_blank', popupOptions);	
+	}
+	
+	
+	
+	
+	
+</script>
+
+</body>
+</html>
